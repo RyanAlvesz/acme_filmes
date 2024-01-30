@@ -5,11 +5,27 @@
 * Versão: 1.0
 ****************************************************************************************************************************************************/
 
+/****************************************************************************************************************************************************
+* Para realizar a conexão com o Banco de Dados precisamos utilizar uma dependência:  
+*  - SEQUELIZE ORM
+*  - PRISMA    ORM
+*  - FASTIFY    ORM
+*
+* Prisma - Dependências:
+*   npm install prisma --save
+*   npm install @prisma/client --save
+*   
+* Comando para incialização o prisma
+*   npx prisma init
+****************************************************************************************************************************************************/
+
+// Import das bibliotecas do projeto
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const funcoes = require('./controller/funcoes.js')
 
+// Cria um objeto app tendo como referência a classe do express
 const app = express()
 
 app.use((request, response, next) => {
