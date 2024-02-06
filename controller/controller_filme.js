@@ -5,6 +5,9 @@
 * Versão: 1.0
 ****************************************************************************************************************************************************/
 
+// Import do arquivo DAO para manipular dados dos BD
+const filmesDAO = require('../model/DAO/filme.js')
+
 //Função para inserir um novo filme no Banco de Dados
 const setNovoFilme = async() => {}
 
@@ -15,7 +18,32 @@ const setAtualizarFilme = async() => {}
 const setExcluirFilme = async(id) => {}
 
 //Função para retornar todos os filmes do Banco de Dados
-const getListarFilmes = async() => {}
+const getListarFilmes = async() => {
+
+    // Cria a variável do tipo JSON     
+    let filmesJSON = {}
+
+    // Chama a função do DAO para buscar os dados do BD
+    let dadosFilmes = await filmesDAO.selectAllFilmes()
+
+    // Verifica se existem dados retornados
+    if(dadosFilmes){
+
+        // Montando o JSON para retornar 
+        filmesJSON.filmes = dadosFilmes
+        filmesJSON.quantidade = dadosFilmes.lenght
+        filmesJSON.status_code = 200
+        // Retorna o JSON montado
+        return filmesJSON
+
+    }else{
+        
+        // Retorna falso quando não houver dados
+        return false
+
+    }
+
+}
 
 //Função para buscar filme pelo id
 const getBuscarFilme = async(id) => {}

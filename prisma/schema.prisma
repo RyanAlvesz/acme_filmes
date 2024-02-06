@@ -9,3 +9,9 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+// Exemplo de como criar uma tabela no BD usando o ORM do prima
+model tbl_teste {
+  id Int @id @default(autoincrement())
+  nome String 
+}

@@ -37,6 +37,12 @@ app.use((request, response, next) => {
 
 })
 
+/************************ Imports de arquivos e bibliotecas do Projeto ************************/
+
+    const controllerFilmes = require('./controller/controller_filme.js')
+
+/**********************************************************************************************/
+
 // EndPoints: Listar o id, nome e quantidade de filmes disponíveis
 app.get('/v1/acme_filmes/filmes', async (request, response, next) => {
     response.json(funcoes.getListaFilmes())
@@ -53,6 +59,20 @@ app.get('/v1/acme_filmes/filme/:id', async (request, response, next) => {
         response.status(200)
     }else{
         response.json({erro: 'Não foi possível encontrar um item'})
+        response.status(404)
+    }
+
+})
+
+app.get('/v2/acme_filmes/filmes', cors(), async (request, response, next) => {
+
+    let dadosFilmes = await controllerFilmes.getListarFilmes()
+
+    if(dadosFilmes){
+        response.json(dadosFilmes)
+        response.status(200)
+    } else {
+        response.json({ message: 'Nenhum registro encontrado'})
         response.status(404)
     }
 
