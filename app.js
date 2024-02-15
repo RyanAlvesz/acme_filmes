@@ -64,9 +64,27 @@ app.get('/v1/acme_filmes/filme/:id', async (request, response, next) => {
 
 })
 
+// EndPoints: Listar todos os filmes e suas informações
 app.get('/v2/acme_filmes/filmes', cors(), async (request, response, next) => {
 
     let dadosFilmes = await controllerFilmes.getListarFilmes()
+
+    if(dadosFilmes){
+        response.json(dadosFilmes)
+        response.status(200)
+    } else {
+        response.json({ message: 'Nenhum registro encontrado'})
+        response.status(404)
+    }
+
+})
+
+// EndPoints: Listar todos os filmes correspondentes com o filtro
+app.get('/v2/acme_filmes/filmes/filtro', cors(), async (request, response, next) => {
+
+    let filtro = request.query.nome
+
+    let dadosFilmes = await controllerFilmes.getFilmesNome(filtro)
 
     if(dadosFilmes){
         response.json(dadosFilmes)

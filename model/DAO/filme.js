@@ -44,10 +44,31 @@ const selectAllFilmes = async() => {
 // Buscar um filme existente filtrando pelo ID
 const selectByIdFilme = async(id) => {}
 
+const selectByName = async(nome) => {
+
+    // Script sql para listar todos os registros
+    let sql = `select * from tbl_filme where tbl_filme.nome like '%${nome}%'`
+
+        // $queryRawUnsafe(sql) -- Encaminha apenas a variável
+        // $queryRaw('select * from table tbl_filmes') -- Encaminha o script
+
+    // Executa o script sql no banco de dados e recebe o retorno na variável rsFilmes
+    let rsFilmes = await prisma.$queryRawUnsafe(sql)
+
+    // Tratamento de erros para retornar os dados ou retornar false
+
+    if (rsFilmes.length > 0)
+        return rsFilmes
+    else
+        return false
+
+}
+
 module.exports = {
     insertFilme,
     updateFilme,
     deleteFilme,
     selectAllFilmes,
-    selectByIdFilme
+    selectByIdFilme,
+    selectByName
 }
