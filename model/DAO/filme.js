@@ -6,61 +6,122 @@
 ****************************************************************************************************************************************************/
 
 // Import da Biblioteca do Prisma Client
-const { PrismaClient } = require ('@prisma/client')
+const { PrismaClient } = require('@prisma/client')
 
 // Instanciando o objeto prisma com as características do Prisma Cliente
 const prisma = new PrismaClient()
 
 // Inserir um novo filme
-const insertFilme = async() => {}
+const insertFilme = async (dadosFilme) => {
+
+    try {
+        
+        let sql = `insert into tbl_filme(
+                                            nome,
+                                            sinopse,
+                                            duracao,
+                                            data_lancamento,
+                                            data_relancamento,
+                                            foto_capa,
+                                            valor_unitario
+                                        ) values (
+                                            '${dadosFilme.nome}',
+                                            '${dadosFilme.sinopse}',
+                                            '${dadosFilme.duracao}',
+                                            '${dadosFilme.data_lancamento}',
+                                            '${dadosFilme.data_relancamento}',
+                                            '${dadosFilme.foto_capa}',
+                                            '${dadosFilme.valor_unitario}'
+                                        )`
+
+        let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+        return true
+
+    } catch (error) {
+        
+        return false
+
+    }
+
+
+
+}
 
 // Atualizar um filme existente filtrando pelo ID
-const updateFilme = async(id) => {}
+const updateFilme = async (id) => { }
 
 // Deletar um filme existente filtrando pelo ID
-const deleteFilme = async(id) => {}
+const deleteFilme = async (id) => { }
 
 // Listar todos os filmes existentes na tabela
-const selectAllFilmes = async() => {
+const selectAllFilmes = async () => {
 
-    // Script sql para listar todos os registros
-    let sql = 'select * from tbl_filme'
+    try {
+
+        // Script sql para listar todos os registros
+        let sql = 'select * from tbl_filme'
 
         // $queryRawUnsafe(sql) -- Encaminha apenas a variável
         // $queryRaw('select * from table tbl_filmes') -- Encaminha o script
 
-    // Executa o script sql no banco de dados e recebe o retorno na variável rsFilmes
-    let rsFilmes = await prisma.$queryRawUnsafe(sql)
+        // Executa o script sql no banco de dados e recebe o retorno na variável rsFilmes
+        let rsFilmes = await prisma.$queryRawUnsafe(sql)
 
-    // Tratamento de erros para retornar os dados ou retornar false
-
-    if (rsFilmes.length > 0)
+        // Tratamento de erros para retornar os dados ou retornar false
         return rsFilmes
-    else
+        
+    } catch (error) {
+  
         return false
+
+    }
 
 }
 
 // Buscar um filme existente filtrando pelo ID
-const selectByIdFilme = async(id) => {}
+const selectByIdFilme = async (id) => {
 
-const selectByName = async(nome) => {
+    try {
 
-    // Script sql para listar todos os registros
-    let sql = `select * from tbl_filme where tbl_filme.nome like '%${nome}%'`
+        // Realiza a busca do Filme pelo ID
+        let sql = `select * from tbl_filme where id = ${id}`
+
+        // Executa no Banco de Dado o script SQL
+        let rsFilmes = await prisma.$queryRawUnsafe(sql)
+
+        return rsFilmes
+
+
+    } catch (error) {
+
+        return false
+
+    }
+
+}
+
+const selectByName = async (nome) => {
+
+    try {
+
+        // Script sql para listar todos os registros
+        let sql = `select * from tbl_filme where tbl_filme.nome like '%${nome}%'`
 
         // $queryRawUnsafe(sql) -- Encaminha apenas a variável
         // $queryRaw('select * from table tbl_filmes') -- Encaminha o script
 
-    // Executa o script sql no banco de dados e recebe o retorno na variável rsFilmes
-    let rsFilmes = await prisma.$queryRawUnsafe(sql)
+        // Executa o script sql no banco de dados e recebe o retorno na variável rsFilmes
+        let rsFilmes = await prisma.$queryRawUnsafe(sql)
 
-    // Tratamento de erros para retornar os dados ou retornar false
-
-    if (rsFilmes.length > 0)
         return rsFilmes
-    else
+        
+
+    } catch (error) {
+
         return false
+
+    }
 
 }
 

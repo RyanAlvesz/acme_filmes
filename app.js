@@ -69,13 +69,8 @@ app.get('/v2/acme_filmes/filmes', cors(), async (request, response, next) => {
 
     let dadosFilmes = await controllerFilmes.getListarFilmes()
 
-    if(dadosFilmes){
-        response.json(dadosFilmes)
-        response.status(200)
-    } else {
-        response.json({ message: 'Nenhum registro encontrado'})
-        response.status(404)
-    }
+    response.status(dadosFilmes.status_code)
+    response.json(dadosFilmes)
 
 })
 
@@ -86,13 +81,21 @@ app.get('/v2/acme_filmes/filmes/filtro', cors(), async (request, response, next)
 
     let dadosFilmes = await controllerFilmes.getFilmesNome(filtro)
 
-    if(dadosFilmes){
-        response.json(dadosFilmes)
-        response.status(200)
-    } else {
-        response.json({ message: 'Nenhum registro encontrado'})
-        response.status(404)
-    }
+    response.status(dadosFilmes.status_code)
+    response.json(dadosFilmes)
+
+})
+
+// EndPoint: Listar os dados do filme filtrando pelo id
+app.get('/v2/acme_filmes/filme/:id', cors(), async (request, response, next) => {
+
+    // Recebe o id da requisição
+    let idFilme = request.params.id
+    
+    let dadosFilme = await controllerFilmes.getBuscarFilme(idFilme)
+    
+    response.status(dadosFilme.status_code);
+    response.json(dadosFilme)
 
 })
 
