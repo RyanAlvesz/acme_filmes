@@ -28,6 +28,8 @@ const funcoes = require('./controller/funcoes.js')
 // Cria um objeto app tendo como referência a classe do express
 const app = express()
 
+const bodyParserJson = bodyParser.json()
+
 app.use((request, response, next) => {
 
     response.header('Access-Control-Allow-Origin', '*')
@@ -38,9 +40,7 @@ app.use((request, response, next) => {
 })
 
 /************************ Imports de arquivos e bibliotecas do Projeto ************************/
-
     const controllerFilmes = require('./controller/controller_filme.js')
-
 /**********************************************************************************************/
 
 // EndPoints: Listar o id, nome e quantidade de filmes disponíveis
@@ -96,6 +96,21 @@ app.get('/v2/acme_filmes/filme/:id', cors(), async (request, response, next) => 
     
     response.status(dadosFilme.status_code);
     response.json(dadosFilme)
+
+})
+
+// EndPoint: Inserir novos filmes no Banco de Dados
+// Não esquecer d ecolocar o bodyParserJSON que é quem define o formato de chegada dos dados
+// Obs: esse objeto foi criado no inicio do projeto
+app.post('/v2/acme_filmes/filme/', cors(), bodyParserJson, async (request, response, next) => {
+
+    // Recebe os dados encaminhados na requisição do body (JSON)
+    let dadosBody = request.body
+    
+    let resultDados = await controllerFilmes.setNovoFilme(dadosBody)
+    
+    response.status(resultDados.status_code);
+    response.json(resultDados)
 
 })
 

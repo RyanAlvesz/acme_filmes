@@ -38,7 +38,8 @@ const ERROR_INTERNAL_SERVER_DB = {
 ****************************************************************************************************************************************************/
 
 const CREATED_ITEM = {
-    status: 201,
+    status: true,
+    status_code: 201,
     message: 'Registro criado com sucesso'
 };
 

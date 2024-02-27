@@ -14,9 +14,34 @@ const prisma = new PrismaClient()
 // Inserir um novo filme
 const insertFilme = async (dadosFilme) => {
 
+    
     try {
-        
-        let sql = `insert into tbl_filme(
+
+        let sql
+
+        if(dadosFilme.data_relancamento == null || dadosFilme.data_relancamento == '' || dadosFilme.data_relancamento == undefined){    
+            
+            sql = `insert into tbl_filme(
+                                            nome,
+                                            sinopse,
+                                            duracao,
+                                            data_lancamento,
+                                            data_relancamento,
+                                            foto_capa,
+                                            valor_unitario
+                                        ) values (
+                                            '${dadosFilme.nome}',
+                                            '${dadosFilme.sinopse}',
+                                            '${dadosFilme.duracao}',
+                                            '${dadosFilme.data_lancamento}',
+                                            null,
+                                            '${dadosFilme.foto_capa}',
+                                            ${dadosFilme.valor_unitario}
+                                        )`
+            
+        } else {
+
+            sql = `insert into tbl_filme(
                                             nome,
                                             sinopse,
                                             duracao,
@@ -31,12 +56,20 @@ const insertFilme = async (dadosFilme) => {
                                             '${dadosFilme.data_lancamento}',
                                             '${dadosFilme.data_relancamento}',
                                             '${dadosFilme.foto_capa}',
-                                            '${dadosFilme.valor_unitario}'
+                                            ${dadosFilme.valor_unitario}
                                         )`
 
-        let resultStatus = await prisma.$executeRawUnsafe(sql)
+        }
 
-        return true
+        // Executa o sciptSQL no DB (devemos usar o comando execute e não o query)
+        // O comando execute deve ser utilizado para INSERT, UPDATE, DELETE
+        let resultStatus = await prisma.$executeRawUnsafe(sql)
+        
+        // Validação para verificar se o insert funcionou no DB
+        if(resultStatus)
+            return true
+        else
+            return false
 
     } catch (error) {
         
