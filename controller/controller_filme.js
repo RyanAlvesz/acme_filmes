@@ -14,31 +14,57 @@ const message = require('../modulo/config.js')
 //Função para inserir um novo filme no Banco de Dados
 const setNovoFilme = async(dadosFilme) => {
 
-    let resultDadosFilme;
+    let resultDadosFilme = {}
 
     //Validação para tratar campos obrigatórios e quantide de caracteres
-    if( dadosFilme.nome == ''               || dadosFilme.nome == undefined              || dadosFilme.nome.length > 80               ||
-        dadosFilme.sinops == ''             || dadosFilme.sinops == undefined            || dadosFilme.sinops.length > 65535          || 
-        dadosFilme.duracao == ''            || dadosFilme.duracao == undefined           || dadosFilme.duracao.length > 18            || 
-        dadosFilme.data_lancamento == ''    || dadosFilme.data_lancamento == undefined   || dadosFilme.data_lancamento.length > 10    || 
-        dadosFilme.data_relancamento == ''  || dadosFilme.data_relancamento == undefined || dadosFilme.data_relancamento.length > 200 ||
-        dadosFilme.foto_capa == ''          || dadosFilme.foto_capa == undefined         || dadosFilme.foto_capa.length > 200         ||
-        dadosFilme.valor_unitario == ''     || dadosFilme.valor_unitario == undefined    || dadosFilme.valor_unitario.length > 200  
+    if( dadosFilme.nome == ''                     || dadosFilme.nome == undefined              || dadosFilme.nome.length > 80               ||
+        dadosFilme.sinopse == ''                  || dadosFilme.sinopse == undefined           || dadosFilme.sinopse.length > 65535         || 
+        dadosFilme.duracao == ''                  || dadosFilme.duracao == undefined           || dadosFilme.duracao.length > 8             || 
+        dadosFilme.data_lancamento == ''          || dadosFilme.data_lancamento == undefined   || dadosFilme.data_lancamento.length > 10    || 
+        dadosFilme.foto_capa == ''                || dadosFilme.foto_capa == undefined         || dadosFilme.foto_capa.length > 200         ||
+        dadosFilme.valor_unitario.length > 200  
      ){
         
         return message.ERROR_REQUIRED_FIELDS; // 400
+        
+    }else{
+        
+        if(dadosFilme.data_relancamento != null){
+            
+            let dadosValidated = false
+            
+            if(dadosFilme.data_relancamento.length > 10){
 
-     }else{
+                return message.ERROR_REQUIRED_FIELDS; // 400
 
-        //Envia os dados para a model inserir no BD
-        resultDadosFilme = await alunoDAO.insertAluno(dadosFilme);
+            }else{
+    
+                dadosValidated = true
 
-        //Valida se o BD inseriu corretamente os dados
-        if(resultDadosFilme)
-            return message.SUCCESS_CREATED_ITEM; // 201
-        else
-            return message.ERROR_INTERNAL_SERVER_DB; // 500
+            }
+ 
+            if(dadosValidated){
 
+                //Envia os dados para a model inserir no BD
+                let novoFilme = await filmesDAO.insertFilme(dadosFilme);
+        
+                //Valida se o BD inseriu corretamente os dados
+                if(novoFilme){
+                    resultDadosFilme.status = message.CREATED_ITEM.status
+                    resultDadosFilme.status_code = message.CREATED_ITEM.status_code
+                    resultDadosFilme.message= message.CREATED_ITEM.message
+                    resultDadosFilme.filme = dadosFilme
+                    return resultDadosFilme;
+                }
+     
+
+            }
+
+            else
+                return message.ERROR_INTERNAL_SERVER_DB; // 500
+ 
+        }
+        
     }
 
 }
