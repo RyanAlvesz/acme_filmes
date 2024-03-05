@@ -22,47 +22,51 @@ const setNovoFilme = async(dadosFilme) => {
         dadosFilme.duracao == ''                  || dadosFilme.duracao == undefined           || dadosFilme.duracao.length > 8             || 
         dadosFilme.data_lancamento == ''          || dadosFilme.data_lancamento == undefined   || dadosFilme.data_lancamento.length > 10    || 
         dadosFilme.foto_capa == ''                || dadosFilme.foto_capa == undefined         || dadosFilme.foto_capa.length > 200         ||
-        dadosFilme.valor_unitario.length > 200  
+        dadosFilme.valor_unitario.length > 5  
      ){
         
         return message.ERROR_REQUIRED_FIELDS; // 400
         
     }else{
         
-        if(dadosFilme.data_relancamento != null){
-            
-            let dadosValidated = false
-            
-            if(dadosFilme.data_relancamento.length > 10){
+        let dadosValidated = false
 
-                return message.ERROR_REQUIRED_FIELDS; // 400
+        // Validação de digitação para data de relancamento que não é um campo obrigatório
+        if  (   dadosFilme.data_relancamento != null &&
+                dadosFilme.data_relancamento != ''   &&
+                dadosFilme.data_relancamento != undefined 
+            ){    
 
-            }else{
+                if(dadosFilme.data_relancamento.length != 10)
+                    return message.ERROR_REQUIRED_FIELDS; // 400
+                else
+                    dadosValidated = true
+
+        } else {
+            dadosValidated = true
+        }
+
+        if(dadosValidated){
+
+            //Envia os dados para a model inserir no BD
+            let novoFilme = await filmesDAO.insertFilme(dadosFilme);
+            
+            let id = await filmesDAO.selectLastId()
     
-                dadosValidated = true
-
-            }
- 
-            if(dadosValidated){
-
-                //Envia os dados para a model inserir no BD
-                let novoFilme = await filmesDAO.insertFilme(dadosFilme);
-        
-                //Valida se o BD inseriu corretamente os dados
-                if(novoFilme){
-                    resultDadosFilme.status = message.CREATED_ITEM.status
-                    resultDadosFilme.status_code = message.CREATED_ITEM.status_code
-                    resultDadosFilme.message= message.CREATED_ITEM.message
-                    resultDadosFilme.filme = dadosFilme
-                    return resultDadosFilme;
-                }
-     
-
+            dadosFilme.id = Number(id[0].id)
+            
+            //Valida se o BD inseriu corretamente os dados
+            if(novoFilme){
+                resultDadosFilme.status = message.CREATED_ITEM.status
+                resultDadosFilme.status_code = message.CREATED_ITEM.status_code
+                resultDadosFilme.message = message.CREATED_ITEM.message
+                resultDadosFilme.filme = dadosFilme
+                return resultDadosFilme;
             }
 
-            else
-                return message.ERROR_INTERNAL_SERVER_DB; // 500
- 
+
+        } else {
+            return message.ERROR_INTERNAL_SERVER_DB; // 500
         }
         
     }

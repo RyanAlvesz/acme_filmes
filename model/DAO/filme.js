@@ -93,7 +93,7 @@ const selectAllFilmes = async () => {
     try {
 
         // Script sql para listar todos os registros
-        let sql = 'select * from tbl_filme'
+        let sql = 'select * from tbl_filme order by id desc'
 
         // $queryRawUnsafe(sql) -- Encaminha apenas a variável
         // $queryRaw('select * from table tbl_filmes') -- Encaminha o script
@@ -158,11 +158,30 @@ const selectByName = async (nome) => {
 
 }
 
+const selectLastId = async () => {
+    
+    try {
+
+        let sql = 'select cast(last_insert_id() as DECIMAL) as id from tbl_filme limit 1'
+    
+        let rsFilmes = await prisma.$queryRawUnsafe(sql)
+    
+        return rsFilmes
+        
+    } catch (error) {
+ 
+        return false
+
+    }
+
+}
+
 module.exports = {
     insertFilme,
     updateFilme,
     deleteFilme,
     selectAllFilmes,
     selectByIdFilme,
-    selectByName
+    selectByName,
+    selectLastId
 }
