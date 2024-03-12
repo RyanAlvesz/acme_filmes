@@ -12,106 +12,166 @@ const filmesDAO = require('../model/DAO/filme.js')
 const message = require('../modulo/config.js')
 
 //Função para inserir um novo filme no Banco de Dados
-const setNovoFilme = async(dadosFilme) => {
+const setNovoFilme = async(dadosFilme, contentType) => {
 
-    let resultDadosFilme = {}
+    try {
+     
+        if(String(contentType).toLowerCase() == 'application/json'){
 
-    //Validação para tratar campos obrigatórios e quantide de caracteres
-    if( dadosFilme.nome == ''                     || dadosFilme.nome == undefined              || dadosFilme.nome.length > 80               ||
-        dadosFilme.sinopse == ''                  || dadosFilme.sinopse == undefined           || dadosFilme.sinopse.length > 65535         || 
-        dadosFilme.duracao == ''                  || dadosFilme.duracao == undefined           || dadosFilme.duracao.length > 8             || 
-        dadosFilme.data_lancamento == ''          || dadosFilme.data_lancamento == undefined   || dadosFilme.data_lancamento.length > 10    || 
-        dadosFilme.foto_capa == ''                || dadosFilme.foto_capa == undefined         || dadosFilme.foto_capa.length > 200         ||
-        dadosFilme.valor_unitario.length > 5  
-     ){
+            let resultDadosFilme = {}
         
-        return message.ERROR_REQUIRED_FIELDS; // 400
+            //Validação para tratar campos obrigatórios e quantide de caracteres
+            if( dadosFilme.nome == ''                     || dadosFilme.nome == undefined              || dadosFilme.nome.length > 80               ||
+                dadosFilme.sinopse == ''                  || dadosFilme.sinopse == undefined           || dadosFilme.sinopse.length > 65535         || 
+                dadosFilme.duracao == ''                  || dadosFilme.duracao == undefined           || dadosFilme.duracao.length > 8             || 
+                dadosFilme.data_lancamento == ''          || dadosFilme.data_lancamento == undefined   || dadosFilme.data_lancamento.length > 10    || 
+                dadosFilme.foto_capa == ''                || dadosFilme.foto_capa == undefined         || dadosFilme.foto_capa.length > 200         ||
+                dadosFilme.valor_unitario.length > 5  
+             ){
+                
+                return message.ERROR_REQUIRED_FIELDS; // 400
+                
+            }else{
+                
+                let dadosValidated = false
         
-    }else{
+                // Validação de digitação para data de relancamento que não é um campo obrigatório
+                if  (   dadosFilme.data_relancamento != null &&
+                        dadosFilme.data_relancamento != ''   &&
+                        dadosFilme.data_relancamento != undefined 
+                    ){    
         
-        let dadosValidated = false
-
-        // Validação de digitação para data de relancamento que não é um campo obrigatório
-        if  (   dadosFilme.data_relancamento != null &&
-                dadosFilme.data_relancamento != ''   &&
-                dadosFilme.data_relancamento != undefined 
-            ){    
-
-                if(dadosFilme.data_relancamento.length != 10)
-                    return message.ERROR_REQUIRED_FIELDS; // 400
-                else
+                        if(dadosFilme.data_relancamento.length != 10)
+                            return message.ERROR_REQUIRED_FIELDS; // 400
+                        else
+                            dadosValidated = true
+        
+                } else {
                     dadosValidated = true
-
-        } else {
-            dadosValidated = true
-        }
-
-        if(dadosValidated){
-
-            //Envia os dados para a model inserir no BD
-            let novoFilme = await filmesDAO.insertFilme(dadosFilme);
-            
-            let id = await filmesDAO.selectLastId()
-    
-            dadosFilme.id = Number(id[0].id)
-            
-            //Valida se o BD inseriu corretamente os dados
-            if(novoFilme){
-                resultDadosFilme.status = message.CREATED_ITEM.status
-                resultDadosFilme.status_code = message.CREATED_ITEM.status_code
-                resultDadosFilme.message = message.CREATED_ITEM.message
-                resultDadosFilme.filme = dadosFilme
-                return resultDadosFilme;
-            }
-
-
-        } else {
-            return message.ERROR_INTERNAL_SERVER_DB; // 500
-        }
+                }
         
+                if(dadosValidated){
+        
+                    //Envia os dados para a model inserir no BD
+                    let novoFilme = await filmesDAO.insertFilme(dadosFilme);
+                    
+                    let id = await filmesDAO.selectLastId()
+            
+                    dadosFilme.id = Number(id[0].id)
+                    
+                    //Valida se o BD inseriu corretamente os dados
+                    if(novoFilme){
+                        resultDadosFilme.status = message.CREATED_ITEM.status
+                        resultDadosFilme.status_code = message.CREATED_ITEM.status_code
+                        resultDadosFilme.message = message.CREATED_ITEM.message
+                        resultDadosFilme.filme = dadosFilme
+                        return resultDadosFilme;
+                    }
+        
+        
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB; // 500
+                }
+                
+            }
+    
+        }else{
+            return message.ERROR_CONTENT_TYPE // 415
+        }
+
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER // 500
     }
 
 }
 
 //Função para atualizar um filme existente
-const setAtualizarFilme = async() => {}
+const setAtualizarFilme = async(dadosFilme, contentType) => {
+
+    try {
+        
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
 
 //Função para excluir um filme existente
-const setExcluirFilme = async(id) => {}
+const setExcluirFilme = async(id) => {
+
+    try {
+        
+        //Recebe o id do filme
+        let idFilme = id
+
+        // Validação para ID vazio, indefinido
+        if(idFilme == '' || idFilme == undefined || isNaN(idFilme)){
+
+            return message.ERROR_INVALID_ID // 400
+
+        } else {
+
+            let dadosFilme = await filmesDAO.deleteFilme(idFilme)
+
+            // Validação para verificar se os dados no servidor foram processados
+            if(dadosFilme){                
+                    
+                return message.DELETED_ITEM // 200
+
+            } else {
+
+                return message.ERROR_INTERNAL_SERVER_DB // 500
+
+            }
+
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
 
 //Função para retornar todos os filmes do Banco de Dados
 const getListarFilmes = async() => {
 
-    // Cria a variável do tipo JSON     
-    let filmesJSON = {}
+    try {
 
-    // Chama a função do DAO para buscar os dados do BD
-    let dadosFilmes = await filmesDAO.selectAllFilmes()
+      // Cria a variável do tipo JSON     
+      let filmesJSON = {}
 
-    // Verifica se existem dados retornados
-    if(dadosFilmes){
-
-        if(dadosFilmes.length > 0) {
-            
-            // Montando o JSON para retornar 
-            filmesJSON.filmes = dadosFilmes
-            filmesJSON.quantidade = dadosFilmes.length
-            filmesJSON.status_code = 200
-            // Retorna o JSON montado
-            return filmesJSON
-        
-        }else{
-
-            return message.ERROR_NOT_FOUND // 404
-
-        }
-
-
-    }else{
-        
-        // Retorna falso quando não houver dados
-        return message.ERROR_INTERNAL_SERVER_DB // 500
-
+      // Chama a função do DAO para buscar os dados do BD
+      let dadosFilmes = await filmesDAO.selectAllFilmes()
+  
+      // Verifica se existem dados retornados
+      if(dadosFilmes){
+  
+          if(dadosFilmes.length > 0) {
+              
+              // Montando o JSON para retornar 
+              filmesJSON.filmes = dadosFilmes
+              filmesJSON.quantidade = dadosFilmes.length
+              filmesJSON.status_code = 200
+              // Retorna o JSON montado
+              return filmesJSON
+          
+          }else{
+  
+              return message.ERROR_NOT_FOUND // 404
+  
+          }
+  
+  
+      }else{
+          
+          // Retorna falso quando não houver dados
+          return message.ERROR_INTERNAL_SERVER_DB // 500
+  
+      }
+      
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
     }
 
 }
@@ -119,7 +179,9 @@ const getListarFilmes = async() => {
 // Função para retornar todos os filmes correspondentes do filtro
 const getFilmesNome = async(filtro) => {
 
-    // Cria a variável do tipo JSON     
+    try {
+    
+        // Cria a variável do tipo JSON     
     let filmesJSON = {}
 
     // Recebendo o parâmetro de pesquisa
@@ -159,48 +221,59 @@ const getFilmesNome = async(filtro) => {
         }
 
     }
+        
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
 }
 
 //Função para buscar filme pelo id
 const getBuscarFilme = async(id) => {
 
-    //Recebe o id do filme
-    let idFilme = id
-    let filmeJSON = {}
- 
-    // Validação para ID vazio, indefinido
-    if(idFilme == '' || idFilme == undefined || isNaN(idFilme)){
+    try {
+        
+        //Recebe o id do filme
+        let idFilme = id
+        let filmeJSON = {}
 
-        return message.ERROR_INVALID_ID // 400
+        // Validação para ID vazio, indefinido
+        if(idFilme == '' || idFilme == undefined || isNaN(idFilme)){
 
-    } else {
-
-        let dadosFilme = await filmesDAO.selectByIdFilme(idFilme)
-
-        // Validação para verificar se os dados no servidor foram processados
-        if(dadosFilme){
-
-            // Validação para verificar se existem dados de retorno
-            if(dadosFilme.length > 0){
-                
-                // Montando o JSON para retornar o filme
-                filmeJSON.filmes = dadosFilme
-                filmeJSON.status_code = 200
-                // Retorna o JSON montado
-                return filmeJSON
-
-            }else{
-
-                return message.ERROR_NOT_FOUND // 404
-
-            }
+            return message.ERROR_INVALID_ID // 400
 
         } else {
 
-            return message.ERROR_INTERNAL_SERVER_DB // 500
+            let dadosFilme = await filmesDAO.selectByIdFilme(idFilme)
+
+            // Validação para verificar se os dados no servidor foram processados
+            if(dadosFilme){
+
+                // Validação para verificar se existem dados de retorno
+                if(dadosFilme.length > 0){
+                    
+                    // Montando o JSON para retornar o filme
+                    filmeJSON.filme = dadosFilme
+                    filmeJSON.status_code = 200
+                    // Retorna o JSON montado
+                    return filmeJSON
+
+                }else{
+
+                    return message.ERROR_NOT_FOUND // 404
+
+                }
+
+            } else {
+
+                return message.ERROR_INTERNAL_SERVER_DB // 500
+
+            }
 
         }
 
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
     }
 
 }

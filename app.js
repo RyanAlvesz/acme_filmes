@@ -43,13 +43,13 @@ app.use((request, response, next) => {
     const controllerFilmes = require('./controller/controller_filme.js')
 /**********************************************************************************************/
 
-// EndPoints: Listar o id, nome e quantidade de filmes disponíveis
+// EndPoint: Listar o id, nome e quantidade de filmes disponíveis
 app.get('/v1/acme_filmes/filmes', async (request, response, next) => {
     response.json(funcoes.getListaFilmes())
     response.status(200)
 })
 
-// EndPoints: Listar informações de um filme específico
+// EndPoint: Listar informações de um filme específico
 app.get('/v1/acme_filmes/filme/:id', async (request, response, next) => {
 
     let id = request.params.id
@@ -64,7 +64,7 @@ app.get('/v1/acme_filmes/filme/:id', async (request, response, next) => {
 
 })
 
-// EndPoints: Listar todos os filmes e suas informações
+// EndPoint: Listar todos os filmes e suas informações
 app.get('/v2/acme_filmes/filmes', cors(), async (request, response, next) => {
 
     let dadosFilmes = await controllerFilmes.getListarFilmes()
@@ -74,7 +74,7 @@ app.get('/v2/acme_filmes/filmes', cors(), async (request, response, next) => {
 
 })
 
-// EndPoints: Listar todos os filmes correspondentes com o filtro
+// EndPoint: Listar todos os filmes correspondentes com o filtro
 app.get('/v2/acme_filmes/filmes/filtro', cors(), async (request, response, next) => {
 
     let filtro = request.query.nome
@@ -104,14 +104,32 @@ app.get('/v2/acme_filmes/filme/:id', cors(), async (request, response, next) => 
 // Obs: esse objeto foi criado no inicio do projeto
 app.post('/v2/acme_filmes/filme/', cors(), bodyParserJson, async (request, response, next) => {
 
+    // Recebe o Content-Type da requisição (A API deve receber somente application/json)
+    let contentType = request.headers['content-type']
+
     // Recebe os dados encaminhados na requisição do body (JSON)
     let dadosBody = request.body
     
-    let resultDados = await controllerFilmes.setNovoFilme(dadosBody)
+    let resultDados = await controllerFilmes.setNovoFilme(dadosBody, contentType)
     
     response.status(resultDados.status_code);
     response.json(resultDados)
 
 })
 
-app.listen(8080, () => {})
+// EndPoint: Deletar filme por id
+app.delete('/v2/acme_filmes/filme/:id', cors(), async (request, response, next) => {
+
+    // Recebe o id da requisição
+    let idFilme = request.params.id
+    
+    let dadosFilme = await controllerFilmes.setExcluirFilme(idFilme)
+    
+    response.status(dadosFilme.status_code);
+    response.json(dadosFilme)
+
+})
+
+app.listen(8080, () => {
+    console.log('API funconando na porta 8080')
+})

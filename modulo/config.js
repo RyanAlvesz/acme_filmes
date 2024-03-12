@@ -27,10 +27,22 @@ const ERROR_REQUIRED_FIELDS = {
     message: 'O parâmetro encaminhado na requisição não é valido'
 }
 
+const ERROR_CONTENT_TYPE = {
+    status: false,
+    status_code: 415,
+    message: 'O Contet-Type da requisição não é suportado. Precisam ser enviados dados no formato application/json'
+}
+
 const ERROR_INTERNAL_SERVER_DB = {
     status: false,
     status_code: 500,
     message: 'Ocorrem erros internos no servidor do banco de dados, por favor contate o administrador do sistema'
+}
+
+const ERROR_INTERNAL_SERVER = {
+    status: false,
+    status_code: 500,
+    message: 'Ocorrem erros internos no servidor na camada de negócio da API, por favor contate o administrador do sistema'
 }
 
 /****************************************************************************************************************************************************
@@ -41,12 +53,21 @@ const CREATED_ITEM = {
     status: true,
     status_code: 201,
     message: 'Registro criado com sucesso'
-};
+}
+
+const DELETED_ITEM = {
+    status: true,
+    status_code: 201,
+    message: 'Item deletado com sucesso'
+}
 
 module.exports = {
     ERROR_INVALID_ID,
     ERROR_NOT_FOUND,
     ERROR_REQUIRED_FIELDS,
     ERROR_INTERNAL_SERVER_DB,
-    CREATED_ITEM
+    ERROR_INTERNAL_SERVER,
+    ERROR_CONTENT_TYPE,
+    CREATED_ITEM,
+    DELETED_ITEM
 }
