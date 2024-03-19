@@ -157,7 +157,7 @@ const selectAllFilmes = async () => {
     try {
 
         // Script sql para listar todos os registros
-        let sql = 'select * from tbl_filme order by id desc'
+        let sql = 'call procListaFilme(0)'
 
         // $queryRawUnsafe(sql) -- Encaminha apenas a variável
         // $queryRaw('select * from table tbl_filmes') -- Encaminha o script
@@ -182,7 +182,7 @@ const selectByIdFilme = async (id) => {
     try {
 
         // Realiza a busca do Filme pelo ID
-        let sql = `select * from tbl_filme where id = ${id}`
+        let sql = `call procListaFilme(${id})`
 
         // Executa no Banco de Dado o script SQL
         let rsFilmes = await prisma.$queryRawUnsafe(sql)
