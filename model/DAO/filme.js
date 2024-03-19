@@ -14,7 +14,6 @@ const prisma = new PrismaClient()
 // Inserir um novo filme
 const insertFilme = async (dadosFilme) => {
 
-    
     try {
 
         let sql
@@ -77,12 +76,58 @@ const insertFilme = async (dadosFilme) => {
 
     }
 
-
-
 }
 
 // Atualizar um filme existente filtrando pelo ID
-const updateFilme = async (id) => { }
+const updateFilme = async (dadosFilme, idFilme) => {
+
+    try {
+
+        let sql
+
+        if(dadosFilme.data_relancamento == null || dadosFilme.data_relancamento == '' || dadosFilme.data_relancamento == undefined){    
+            
+            sql = `update tbl_filme set 
+                                        nome = '${dadosFilme.nome}',
+                                        sinopse = '${dadosFilme.sinopse}',
+                                        duracao = '${dadosFilme.duracao}',
+                                        data_lancamento = '${dadosFilme.data_lancamento}',
+                                        data_relancamento = null,
+                                        foto_capa = '${dadosFilme.foto_capa}',
+                                        valor_unitario = ${dadosFilme.valor_unitario}
+                                    where id = ${idFilme}`
+            
+        } else {
+
+            sql = `update tbl_filme set 
+                                        nome = '${dadosFilme.nome}',
+                                        sinopse = '${dadosFilme.sinopse}',
+                                        duracao = '${dadosFilme.duracao}',
+                                        data_lancamento = '${dadosFilme.data_lancamento}',
+                                        data_relancamento = '${dadosFilme.data_relancamento}',
+                                        foto_capa = '${dadosFilme.foto_capa}',
+                                        valor_unitario = ${dadosFilme.valor_unitario}
+                                    where id = ${idFilme}`
+
+        }
+
+        // Executa o sciptSQL no DB (devemos usar o comando execute e não o query)
+        // O comando execute deve ser utilizado para INSERT, UPDATE, DELETE
+        let resultStatus = await prisma.$executeRawUnsafe(sql)
+        
+        // Validação para verificar se o insert funcionou no DB
+        if(resultStatus)
+            return true
+        else
+            return false
+
+    } catch (error) {
+        
+        return false
+
+    }
+
+}
 
 // Deletar um filme existente filtrando pelo ID
 const deleteFilme = async (id) => {
@@ -93,7 +138,7 @@ const deleteFilme = async (id) => {
         let sql = `delete from tbl_filme where id = ${id}`
 
         // Executa no Banco de Dado o script SQL
-        let rsFilmes = await prisma.$queryRawUnsafe(sql)
+        let rsFilmes = await prisma.$executeRawUnsafe(sql)
 
         return rsFilmes
 
@@ -153,6 +198,7 @@ const selectByIdFilme = async (id) => {
 
 }
 
+// Buscar filmes existentes filtrando pelo nome
 const selectByName = async (nome) => {
 
     try {
@@ -177,6 +223,7 @@ const selectByName = async (nome) => {
 
 }
 
+// Buscar o id do último item da tabela
 const selectLastId = async () => {
     
     try {

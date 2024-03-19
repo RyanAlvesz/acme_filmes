@@ -49,17 +49,24 @@ const ERROR_INTERNAL_SERVER = {
 *                                                              Mensagens de Sucesso
 ****************************************************************************************************************************************************/
 
+const UPDATED_ITEM = {
+    status: true,
+    status_code: 200,
+    message: 'Registro atualizada com sucesso'
+}
+
+const DELETED_ITEM = {
+    status: true,
+    status_code: 200,
+    message: 'Item deletado com sucesso'
+}
+
 const CREATED_ITEM = {
     status: true,
     status_code: 201,
     message: 'Registro criado com sucesso'
 }
 
-const DELETED_ITEM = {
-    status: true,
-    status_code: 201,
-    message: 'Item deletado com sucesso'
-}
 
 module.exports = {
     ERROR_INVALID_ID,
@@ -68,6 +75,7 @@ module.exports = {
     ERROR_INTERNAL_SERVER_DB,
     ERROR_INTERNAL_SERVER,
     ERROR_CONTENT_TYPE,
-    CREATED_ITEM,
-    DELETED_ITEM
+    DELETED_ITEM,
+    UPDATED_ITEM,
+    CREATED_ITEM
 }

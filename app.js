@@ -130,6 +130,25 @@ app.delete('/v2/acme_filmes/filme/:id', cors(), async (request, response, next) 
 
 })
 
+// EndPoint: Atualizar filme por id
+app.put('/v2/acme_filmes/filme/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    // Recebe o id da requisição
+    let idFilme = request.params.id
+
+    // Recebe o Content-Type da requisição (A API deve receber somente application/json)
+    let contentType = request.headers['content-type']
+
+    // Recebe os dados encaminhados na requisição do body (JSON)
+    let dadosBody = request.body
+    
+    let resultDados = await controllerFilmes.setAtualizarFilme(dadosBody, contentType, idFilme)
+    
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
 app.listen(8080, () => {
-    console.log('API funconando na porta 8080')
+    console.log('API funcionando na porta 8080')
 })
