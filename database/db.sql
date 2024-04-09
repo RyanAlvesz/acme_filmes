@@ -2,10 +2,15 @@ create schema db_acme_filmes_turma_ab;
 
 use db_acme_filmes_turma_ab;
 
+-- creates
+
 create table tbl_classificacao (
 
 	id integer not null auto_increment primary key,
-	classificacao integer not null
+	sigla varchar(5) not null,
+    descricao varchar(150) not null,
+    classificacao_indicativa varchar(150) not null,
+	icone varchar(200) not null
     
 );
 
@@ -15,12 +20,12 @@ create table tbl_filme (
     sinopse text not null,
     duracao time not null,
     data_lancamento date not null,
-    data_relancamento date,
-	foto_capa varchar(200) not null,
-    foto_banner varchar(200) not null,
-    id_classificacao integer not null,
+	foto_capa text not null,
+    foto_banner text not null,
     destaque boolean not null,
-    
+    link_trailer varchar(200) not null,
+    id_classificacao integer not null,
+
     unique index(id),
     unique key (id),
     
@@ -65,11 +70,21 @@ create table tbl_filme_genero (
     foreign key (id_genero) references tbl_genero(id)
 );
 
+create table tbl_nacionalidade (
+	id integer not null auto_increment primary key,
+	pais varchar(150) not null,
+    nome varchar(150) not null,
+    bandeira text not null,
+    
+	unique index(id),
+    unique key (id)
+);
+
 create table tbl_ator (
 	id integer not null auto_increment primary key,
 	nome varchar(100) not null,
-    foto varchar(255) not null,
-    descricao text not null,
+    foto text not null,
+    biografia text not null,
     data_nascimento date not null,
     
 	unique index(id),
@@ -88,11 +103,23 @@ create table tbl_filme_ator (
     foreign key (id_ator) references tbl_ator(id)
 );
 
+create table tbl_nacionalidade_ator (
+	id integer not null auto_increment primary key,
+    id_nacionalidade integer not null,
+    id_ator integer not null,
+    
+	unique index(id),
+    unique key (id),
+    
+    foreign key (id_nacionalidade) references tbl_nacionalidade(id),
+    foreign key (id_ator) references tbl_ator(id)
+);
+
 create table tbl_usuario (
 	id integer not null auto_increment primary key,
 	nome varchar(100) not null,
     email varchar(100) not null,
-    senha varchar(20) not null,
+    senha varchar(50) not null,
     
 	unique index(id),
     unique key (id)
@@ -105,7 +132,7 @@ create table tbl_categoria_foto_perfil (
 
 create table tbl_foto_perfil (
 	id integer not null auto_increment primary key,
-    foto varchar(200),
+    foto text,
     id_categoria_foto_perfil integer not null,
         
 	unique index(id),
@@ -139,54 +166,85 @@ create table tbl_filme_favorito (
     foreign key (id_perfil) references tbl_perfil(id) 
 );
 
+create table tbl_funcionario (
+	id integer not null auto_increment primary key,
+	nome varchar(100) not null,
+    email varchar(100) not null,
+    senha varchar(50) not null,
+    
+	unique index(id),
+    unique key (id)
+);
 
+-- Inserts
 
 insert into tbl_classificacao (
-					classificacao
+					sigla,
+					descricao,
+                    classificacao_indicativa,
+                    icone
 				 ) values (
-					0
+					'Livre',
+                    'Histórias sem conteúdos pontencialmente prejudiciais para qualquer faixa etária',
+                    'Livre para todos os públicos',
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/DJCTQ_-_L.svg/1024px-DJCTQ_-_L.svg.png'
                  ), (
-					10
+					'10',
+                    'Histórias de conteúdo violento e linguagem imprópria de nível leve',
+                    'Não recomendado para menores de 10 anos',
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/DJCTQ_-_10.svg/1024px-DJCTQ_-_10.svg.png'
                  ), (
-					12
+					'12',
+                    'Histórias com cenas de agressão física, insinuação de consumo de drogas e insinuação leve de sexo',
+                    'Não recomendado para menores de 12 anos',
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/DJCTQ_-_12.svg/1024px-DJCTQ_-_12.svg.png'
                  ), (
-					14
+					'14',
+                    'Histórias com agressão física média, consumo de drogas explícito e insinuação de sexo moderada',
+                    'Não recomendado para menores de 14 anos',
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/DJCTQ_-_14.svg/1024px-DJCTQ_-_14.svg.png'
                  ), (
-					16
+					'16',
+                    'Histórias com consumo de drogas explícito, agressão física acentuada e insinuação de sexo acentuada',
+                    'Não recomendado para menores de 16 anos',
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/DJCTQ_-_16.svg/1024px-DJCTQ_-_16.svg.png'
                  ), (
-					18
+					'18',
+                    'Histórias com consumo e indução ao consumo de drogas, violência extrema, suicídio, cenas de sexo explícitas, e distúrbios psicossomáticos',
+                    'Não recomendado para menores de 18 anos',
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/DJCTQ_-_18.svg/1024px-DJCTQ_-_18.svg.png'
                  );
 
-insert into tbl_filme (
+insert into tbl_filme ( 
 						nome,
                         sinopse,
                         duracao,
                         data_lancamento,
-                        data_relancamento,
                         foto_capa,
                         foto_banner,
-                        id_classificacao,
-                        destaque
+                        destaque,
+                        link_trailer,
+                        id_classificacao
 					   ) values (
                        'Barbie',
                        'No fabuloso live-action da boneca mais famosa do mundo, acompanhamos o dia a dia em Barbieland - o mundo mágico das Barbies, onde todas as versões da boneca vivem em completa harmonia e suas únicas preocupações são encontrar as melhores roupas para passear com as amigas e curtir intermináveis festas. Porém, uma das bonecas (interpretada por Margot Robbie) começa a perceber que talvez sua vida não seja tão perfeita assim, questionando-se sobre o sentido de sua existência e alarmando suas companheiras. Logo, sua vida no mundo cor-de-rosa começa a mudar e, eventualmente, ela sai de Barbieland. Forçada a viver no mundo real, Barbie precisa lutar com as dificuldades de não ser mais apenas uma boneca - pelo menos ela está acompanhada de seu fiel e amado Ken (Ryan Gosling), que parece cada vez mais fascinado pela vida no novo mundo. Enquanto isso, Barbie tem dificuldades para se ajustar, e precisa enfrentar vários momentos nada coloridos até descobrir que a verdadeira beleza está no interior de cada um.',
                        '01:55:00',
                        '2023-07-20',
-                       null,
                        'https://br.web.img2.acsta.net/pictures/23/04/05/09/34/1483846.jpg',
 					   'https://cdn.folhape.com.br/img/pc/1100/1/dn_arquivo/2023/04/fs4eedswiau8bzi.jpg',
-                       3,
-                       true
+                       false,
+                       'https://www.youtube.com/watch?v=pBk4NYhWNMM',
+                       3
                        ), (
                        'Kill Bill - Volume 1',
                        'A Noiva (Uma Thurman) é uma perigosa assassina que trabalhava em um grupo, liderado por Bill (David Carradine), composto principalmente por mulheres. Grávida, ela decide escapar dessa vida de violência e decide se casar, mas no dia da cerimônia seus companheiros de trabalho se voltam contra ela, quase a matando. Após cinco anos em coma, ela desperta sem um bebê e com um único desejo: vingança. A Noiva decide procurar, e matar, as cinco pessoas que destruiram o seu futuro, começando pelas perigosas assassinas Vernita Green (Vivica A. Fox) e O-Ren Ishii (Lucy Liu).',
                        '01:52:00',
                        '2004-04-23',
-                       null,
                        'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/89/48/24/20122126.jpg',
                        'https://gizmodo.uol.com.br/wp-content/blogs.dir/8/files/2021/10/killbill.jpg',
-                       6,
-                       false
+                       true,
+					   'https://www.youtube.com/watch?v=7kSuas6mRpk',
+                       6
                        );
 
 insert into tbl_diretor (
@@ -236,11 +294,25 @@ insert into tbl_filme_genero (
 					2,
                     4
                  );
-			 
+
+insert into tbl_nacionalidade (
+					pais,
+                    nome,
+                    bandeira
+				 ) values (
+					'Estados Unidos',
+					'Estadounidense',
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Flag_of_the_United_States_%28DoS_ECA_Color_Standard%29.svg/1920px-Flag_of_the_United_States_%28DoS_ECA_Color_Standard%29.svg.png'
+                 ), (
+					'Brasil',
+					'Brasileiro',
+                    'https://upload.wikimedia.org/wikipedia/en/thumb/0/05/Flag_of_Brazil.svg/1280px-Flag_of_Brazil.svg.png'
+                 );
+
 insert into tbl_ator (
 					nome,
                     foto,
-                    descricao,
+                    biografia,
                     data_nascimento
 				 ) values (
 					'Uma Thurman',
@@ -265,6 +337,17 @@ insert into tbl_filme_ator (
                     1
                  );
 
+insert into tbl_nacionalidade_ator (
+					id_ator,
+                    id_nacionalidade
+				 ) values (
+					1,
+                    1
+                 ), (
+					2,
+                    1
+                 );
+                 
 insert into tbl_usuario (
 					nome,
                     email,
@@ -310,6 +393,15 @@ insert into tbl_filme_favorito (
                     1
                  );
 
+insert into tbl_funcionario (
+					nome,
+                    email,
+                    senha
+				 ) values (
+					'Ryan Alves de Carvalho',
+                    'ryan@email.com',
+                    '1234'
+                 );
 
 select f.nome, f.sinopse, c.classificacao as idade, g.nome as genero, a.nome as ator_principal, d.nome as diretor
 from tbl_filme as f
@@ -328,8 +420,6 @@ on f.id = fd.id_filme
 inner join tbl_diretor as d
 on fd.id_diretor = d.id
 group by f.id;
-
-
 
 update tbl_filme set 
 						nome = 'Kill Bill - Volume 1',
@@ -381,5 +471,4 @@ create view viewListaFilme as select * from procListaFilme(0);
 drop view viewListaFilme;
 
 select * from viewListaFilme;
-
                        

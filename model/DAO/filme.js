@@ -27,7 +27,9 @@ const insertFilme = async (dadosFilme) => {
                                             data_lancamento,
                                             data_relancamento,
                                             foto_capa,
-                                            valor_unitario
+                                            foto_banner,
+                                            id_classificacao,
+                                            destaque
                                         ) values (
                                             '${dadosFilme.nome}',
                                             '${dadosFilme.sinopse}',
@@ -35,7 +37,9 @@ const insertFilme = async (dadosFilme) => {
                                             '${dadosFilme.data_lancamento}',
                                             null,
                                             '${dadosFilme.foto_capa}',
-                                            ${dadosFilme.valor_unitario}
+                                            '${dadosFilme.foto_banner}',
+                                            ${dadosFilme.id_classificacao},
+                                            'false'
                                         )`
             
         } else {
@@ -47,7 +51,9 @@ const insertFilme = async (dadosFilme) => {
                                             data_lancamento,
                                             data_relancamento,
                                             foto_capa,
-                                            valor_unitario
+                                            foto_banner,
+                                            id_classificacao,
+                                            destaque
                                         ) values (
                                             '${dadosFilme.nome}',
                                             '${dadosFilme.sinopse}',
@@ -55,7 +61,9 @@ const insertFilme = async (dadosFilme) => {
                                             '${dadosFilme.data_lancamento}',
                                             '${dadosFilme.data_relancamento}',
                                             '${dadosFilme.foto_capa}',
-                                            ${dadosFilme.valor_unitario}
+                                            '${dadosFilme.foto_banner}',
+                                            ${dadosFilme.id_classificacao},
+                                            'false'
                                         )`
 
         }
@@ -152,7 +160,7 @@ const deleteFilme = async (id) => {
 }
 
 // Listar todos os filmes existentes na tabela
-const selectAllFilmes = async () => {
+const selectAllFilmes = async () => {   
 
     try {
 

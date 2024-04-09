@@ -41,6 +41,7 @@ app.use((request, response, next) => {
 
 /************************ Imports de arquivos e bibliotecas do Projeto ************************/
     const controllerFilmes = require('./controller/controller_filme.js')
+    const controllerDiretores = require('./controller/controller_diretores.js')
 /**********************************************************************************************/
 
 // EndPoint: Listar o id, nome e quantidade de filmes disponíveis
@@ -63,6 +64,8 @@ app.get('/v1/acme_filmes/filme/:id', async (request, response, next) => {
     }
 
 })
+
+// ENDPOINTS PARA FILMES:
 
 // EndPoint: Listar todos os filmes e suas informações
 app.get('/v2/acme_filmes/filmes', cors(), async (request, response, next) => {
@@ -148,6 +151,61 @@ app.put('/v2/acme_filmes/filme/:id', cors(), bodyParserJson, async (request, res
     response.json(resultDados)
 
 })
+
+// ENDPOINTS PARA DIRETORES:
+
+// EndPoint: Listar todos os diretores e suas informações
+app.get('/v2/acme_filmes/diretores', cors(), async (request, response, next) => {
+
+    let dadosDiretores = await controllerDiretores.getListarDiretores()
+    response.status(dadosDiretores.status_code)
+    response.json(dadosDiretores)
+
+})
+
+// EndPoint: Listar os dados do diretor filtrando pelo id
+app.get('/v2/acme_filmes/diretor/:id', cors(), async (request, response, next) => {
+
+    let idDiretor = request.params.id
+    let dadosDiretor = await controllerDiretores.getBuscarDiretor(idDiretor)
+    response.status(dadosDiretor.status_code);
+    response.json(dadosDiretor)
+
+})
+
+// EndPoint: Inserir novos diretores no Banco de Dados
+app.post('/v2/acme_filmes/diretor/', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerDiretores.setNovoDiretor(dadosBody, contentType)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
+// EndPoint: Deletar diretor por id
+app.delete('/v2/acme_filmes/diretor/:id', cors(), async (request, response, next) => {
+
+    let idDiretor = request.params.id
+    let dadosDiretor = await controllerDiretores.setExcluirDiretor(idDiretor)
+    response.status(dadosDiretor.status_code);
+    response.json(dadosDiretor)
+
+})
+
+// EndPoint: Atualizar diretor por id
+app.put('/v2/acme_filmes/diretor/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let idDiretor = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerDiretores.setAtualizarDiretor(dadosBody, contentType, idDiretor)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
 
 app.listen(8080, () => {
     console.log('API funcionando na porta 8080')
