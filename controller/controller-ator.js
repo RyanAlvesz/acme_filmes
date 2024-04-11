@@ -177,12 +177,21 @@ const getListarAtores = async() => {
         let atorJSON = {}
         let dadosAtor = await atoresDAO.selectAllAtores()
         
-        dadosAtor.forEach(async ator => {
+        // dadosAtor.forEach(async ator => {
+        //     let nacionalidades = await getListarNacionalidadesAtor(ator.id)
+        //     if(nacionalidades.status_code == 200){
+        //         ator.nacionalidades = nacionalidades.nacionalidades     
+        //     }            
+        // })
+
+        const promisses = dadosAtor.map(async (ator) => {
             let nacionalidades = await getListarNacionalidadesAtor(ator.id)
             if(nacionalidades.status_code == 200){
                 ator.nacionalidades = nacionalidades.nacionalidades     
-            }            
+            } 
         })
+        
+        await Promise.all(promisses)
 
         if(dadosAtor){
             

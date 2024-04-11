@@ -9,10 +9,11 @@ datasource db {
 
 model tbl_ator {
   id                     Int                      @id @unique(map: "id") @default(autoincrement())
-  nome                   String                   @db.VarChar(100)
+  nome                   String                   @db.VarChar(150)
   foto                   String                   @db.Text
   biografia              String                   @db.Text
   data_nascimento        DateTime                 @db.Date
+  data_falecimento       DateTime?                @db.Date
   tbl_filme_ator         tbl_filme_ator[]
   tbl_nacionalidade_ator tbl_nacionalidade_ator[]
 }
@@ -28,7 +29,7 @@ model tbl_classificacao {
   sigla                    String      @db.VarChar(5)
   descricao                String      @db.VarChar(150)
   classificacao_indicativa String      @db.VarChar(150)
-  icone                    String      @db.VarChar(200)
+  icone                    String      @db.Text
   tbl_filme                tbl_filme[]
 }
 
