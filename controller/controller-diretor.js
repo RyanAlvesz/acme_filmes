@@ -1,14 +1,11 @@
 /****************************************************************************************************************************************************
 * Objetivo: Arquivo responsável pela interação entre o APP e a Model, que teremos todas as trativas e regras de negócio para o CRUD de diretores
-* Data: 30/01/2024
+* Data: 09/04/2024
 * Autor: Ryan Alves
 * Versão: 1.0
 ****************************************************************************************************************************************************/
 
-// Import do arquivo DAO para manipular dados dos BD
-const diretoresDAO = require('../model/DAO/diretores.js')
-
-// Import do arquivo para mensagens
+const diretoresDAO = require('../model/DAO/diretor.js')
 const message = require('../modulo/config.js')
 
 //Função para inserir um novo diretor no Banco de Dados
@@ -20,7 +17,7 @@ const setNovoDiretor = async(dadosDiretor, contentType) => {
 
             let resultDadosDiretor = {}
         
-            if( dadosDiretor.nome == ''                     || dadosDiretor.nome == undefined              || dadosDiretor.nome.length > 100){
+            if(dadosDiretor.nome == '' || dadosDiretor.nome == undefined || dadosDiretor.nome.length > 100){
 
                 return message.ERROR_REQUIRED_FIELDS // 400  
 
@@ -70,8 +67,8 @@ const setAtualizarDiretor = async(dadosDiretor, contentType, idDiretor) => {
             let resultDadosDiretor = {}
         
             if( 
-                idDiretor == ''                             || idDiretor == undefined                      ||
-                dadosDiretor.nome == ''                     || dadosDiretor.nome == undefined              || dadosDiretor.nome.length > 80
+                idDiretor == ''          || idDiretor == undefined         ||
+                dadosDiretor.nome == ''  || dadosDiretor.nome == undefined || dadosDiretor.nome.length > 100
             ){
                 
                 return message.ERROR_REQUIRED_FIELDS // 400

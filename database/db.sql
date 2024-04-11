@@ -10,7 +10,7 @@ create table tbl_classificacao (
 	sigla varchar(5) not null,
     descricao varchar(150) not null,
     classificacao_indicativa varchar(150) not null,
-	icone varchar(200) not null
+	icone text not null
     
 );
 
@@ -82,10 +82,11 @@ create table tbl_nacionalidade (
 
 create table tbl_ator (
 	id integer not null auto_increment primary key,
-	nome varchar(100) not null,
+	nome varchar(150) not null,
     foto text not null,
     biografia text not null,
     data_nascimento date not null,
+    data_falecimento date,
     
 	unique index(id),
     unique key (id)
@@ -313,17 +314,20 @@ insert into tbl_ator (
 					nome,
                     foto,
                     biografia,
-                    data_nascimento
+                    data_nascimento,
+                    data_falecimento
 				 ) values (
 					'Uma Thurman',
 					'https://br.web.img3.acsta.net/pictures/19/08/29/21/14/0483094.jpg',
                     'Uma Karuna Thurman é uma atriz norte-americana vencedora de um Globo de Ouro e indicada ao Oscar. Ficou famosa por fazer papéis destacados nos filmes do diretor-escritor Quentin Tarantino, como Pulp Fiction, e, na sequência, as duas partes de Kill Bill.',
-                    '1970-04-29'
+                    '1970-04-29',
+                    null
                  ), (
 					'Margot Robbie',
 					'https://s2-epocanegocios.glbimg.com/x2IhXKs3IuLQEKZ2vpS7YWB-D8g=/0x0:743x1024/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_e536e40f1baf4c1a8bf1ed12d20577fd/internal_photos/bs/2023/o/O/i9Xpn7TAAMPe9ECFUSrw/margot.jpg',
                     'Margot Elise Robbie é uma atriz e produtora australiana, indicada a dois Óscares, quatro Globos de Ouro e cinco BAFTAs. Em 2017, a revista Time a nomeou uma das 100 pessoas mais influentes do mundo, e, em 2019, foi classificada entre as atrizes mais bem pagas do mundo pela Forbes.',
-                    '1990-07-02'
+                    '1990-07-02',
+                    null
                  );
                  
 insert into tbl_filme_ator (
@@ -402,43 +406,23 @@ insert into tbl_funcionario (
                     'ryan@email.com',
                     '1234'
                  );
-
-select f.nome, f.sinopse, c.classificacao as idade, g.nome as genero, a.nome as ator_principal, d.nome as diretor
-from tbl_filme as f
-inner join tbl_classificacao as c
-on f.id_classificacao = c.id
-inner join tbl_filme_genero as fg
-on f.id = fg.id_filme 
-inner join tbl_genero as g
-on fg.id_genero = g.id
-inner join tbl_filme_ator as fa
-on f.id = fa.id_filme 
-inner join tbl_ator as a
-on fa.id_ator = a.id
-inner join tbl_filme_diretor as fd
-on f.id = fd.id_filme
-inner join tbl_diretor as d
-on fd.id_diretor = d.id
-group by f.id;
-
+                 
 update tbl_filme set 
-						nome = 'Kill Bill - Volume 1',
-                        sinopse = 'A Noiva (Uma Thurman) é uma perigosa assassina que trabalhava em um grupo, liderado por Bill (David Carradine), composto principalmente por mulheres. Grávida, ela decide escapar dessa vida de violência e decide se casar, mas no dia da cerimônia seus companheiros de trabalho se voltam contra ela, quase a matando. Após cinco anos em coma, ela desperta sem um bebê e com um único desejo: vingança. A Noiva decide procurar, e matar, as cinco pessoas que destruiram o seu futuro, começando pelas perigosas assassinas Vernita Green (Vivica A. Fox) e O-Ren Ishii (Lucy Liu).',
-                        duracao = '01:52:00',
-                        data_lancamento = '2004-04-23',
-                        data_relancamento = null,
-                        foto_capa = 'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/89/48/24/20122126.jpg',
-                        valor_unitario = null
-					where id = 2;
+nome = 'Kill Bill - Volume 1',
+sinopse = 'A Noiva (Uma Thurman) é uma perigosa assassina que trabalhava em um grupo, liderado por Bill (David Carradine), composto principalmente por mulheres. Grávida, ela decide escapar dessa vida de violência e decide se casar, mas no dia da cerimônia seus companheiros de trabalho se voltam contra ela, quase a matando. Após cinco anos em coma, ela desperta sem um bebê e com um único desejo: vingança. A Noiva decide procurar, e matar, as cinco pessoas que destruiram o seu futuro, começando pelas perigosas assassinas Vernita Green (Vivica A. Fox) e O-Ren Ishii (Lucy Liu).',
+duracao = '01:52:00',
+data_lancamento = '2004-04-23',
+data_relancamento = null,
+foto_capa = 'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/89/48/24/20122126.jpg',
+valor_unitario = null
+where id = 2;
 
 select cast(last_insert_id() as DECIMAL) as id from tbl_filme limit 1;
- 
-select * from tbl_filme;
 select id, nome, sinopse, time_format(duracao, '%H:%i:%S') as duracao, date_format(data_lancamento, '%Y-%m-%d') as data_lancamento, date_format(data_relancamento, '%Y-%m-%d') as data_relancamento, foto_capa, valor_unitario from tbl_filme order by id desc;
 
+select * from tbl_ator order by id desc;
 
 # Procedures
-
 # Permite criar uma procedure
 ### Na passagem de parametros existem 3 tipos (IN, OUT, INOUT)
 ## IN    - significa que a procedure recebe um parâmetro de entrada

@@ -52,7 +52,7 @@ const ERROR_INTERNAL_SERVER = {
 const UPDATED_ITEM = {
     status: true,
     status_code: 200,
-    message: 'Registro atualizada com sucesso'
+    message: 'Registro atualizado com sucesso'
 }
 
 const DELETED_ITEM = {
