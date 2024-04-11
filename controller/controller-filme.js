@@ -11,6 +11,9 @@ const filmesDAO = require('../model/DAO/filme.js')
 // Import do arquivo para mensagens
 const message = require('../modulo/config.js')
 
+// Import do controller de classificação para validação
+const controllerClassificacoes = require('./controller-classificacao.js')
+
 //Função para inserir um novo filme no Banco de Dados
 const setNovoFilme = async(dadosFilme, contentType) => {
 
@@ -19,67 +22,53 @@ const setNovoFilme = async(dadosFilme, contentType) => {
         if(String(contentType).toLowerCase() == 'application/json'){
 
             let resultDadosFilme = {}
-        
+            let validacaoClassificacao = await controllerClassificacoes.getBuscarClassificacao(dadosFilme.id_classificacao)
+
             //Validação para tratar campos obrigatórios e quantide de caracteres
-            if( dadosFilme.nome == ''                     || dadosFilme.nome == undefined              || dadosFilme.nome.length > 80               ||
+            if( 
+                dadosFilme.nome == ''                     || dadosFilme.nome == undefined              || dadosFilme.nome.length > 80               ||
                 dadosFilme.sinopse == ''                  || dadosFilme.sinopse == undefined           || dadosFilme.sinopse.length > 65535         || 
                 dadosFilme.duracao == ''                  || dadosFilme.duracao == undefined           || dadosFilme.duracao.length > 8             || 
                 dadosFilme.data_lancamento == ''          || dadosFilme.data_lancamento == undefined   || dadosFilme.data_lancamento.length > 10    || 
-                dadosFilme.foto_capa == ''                || dadosFilme.foto_capa == undefined         || dadosFilme.foto_capa.length > 200         ||
-                dadosFilme.valor_unitario.length > 5  
+                dadosFilme.foto_capa == ''                || dadosFilme.foto_capa == undefined         || dadosFilme.foto_capa.length > 65535       ||
+                dadosFilme.foto_banner == ''              || dadosFilme.foto_banner == undefined       || dadosFilme.foto_banner.length > 65535     ||
+                dadosFilme.destaque == undefined          || dadosFilme.destaque.length > 5            ||
+                dadosFilme.link_trailer == ''             || dadosFilme.link_trailer == undefined      || dadosFilme.link_trailer.length > 200      ||
+                dadosFilme.id_classificacao == ''         || dadosFilme.id_classificacao == undefined  ||
+                validacaoClassificacao.status == false  
              ){
                 
                 return message.ERROR_REQUIRED_FIELDS // 400
                 
             }else{
                 
-                let dadosValidated = false
-        
-                // Validação de digitação para data de relancamento que não é um campo obrigatório
-                if  (   dadosFilme.data_relancamento != null &&
-                        dadosFilme.data_relancamento != ''   &&
-                        dadosFilme.data_relancamento != undefined 
-                    ){    
-        
-                        if(dadosFilme.data_relancamento.length != 10)
-                            return message.ERROR_REQUIRED_FIELDS // 400
-                        else
-                            dadosValidated = true
-        
-                } else {
-                    dadosValidated = true
-                }
-        
-                if(dadosValidated){
-        
-                    //Envia os dados para a model inserir no BD
-                    let novoFilme = await filmesDAO.insertFilme(dadosFilme)
-                    
-                    let id = await filmesDAO.selectLastId()
-            
-                    dadosFilme.id = Number(id[0].id)
-                    
-                    //Valida se o BD inseriu corretamente os dados
-                    if(novoFilme){
+                // if(dadosFilme.destaque == true){
+                //     dadosFilme.removeDestaque()
+                // }
+                
+                //Envia os dados para a model inserir no BD
+                let novoFilme = await filmesDAO.insertFilme(dadosFilme)
+                let id = await filmesDAO.selectLastId()
+                
+                dadosFilme.classificacao = validacaoClassificacao.classificacao[0].sigla
+                dadosFilme.classificacao_indicativa = validacaoClassificacao.classificacao[0].classificacao_indicativa
+                dadosFilme.id = Number(id[0].id)
+                
+                //Valida se o BD inseriu corretamente os dados
+                if(novoFilme){
 
-                        resultDadosFilme.status = message.CREATED_ITEM.status
-                        resultDadosFilme.status_code = message.CREATED_ITEM.status_code
-                        resultDadosFilme.message = message.CREATED_ITEM.message
-                        resultDadosFilme.filme = dadosFilme
-                        return resultDadosFilme
+                    resultDadosFilme.status = message.CREATED_ITEM.status
+                    resultDadosFilme.status_code = message.CREATED_ITEM.status_code
+                    resultDadosFilme.message = message.CREATED_ITEM.message
+                    resultDadosFilme.filme = dadosFilme
+                    return resultDadosFilme
 
-                    }else {
+                }else {
 
-                        return message.ERROR_INTERNAL_SERVER_DB // 500
-
-                    }
-        
-        
-                } else {
-
-                    return message.ERROR_REQUIRED_FIELDS // 400
+                    return message.ERROR_INTERNAL_SERVER_DB // 500
 
                 }
+        
                 
             }
     

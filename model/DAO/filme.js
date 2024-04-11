@@ -16,57 +16,7 @@ const insertFilme = async (dadosFilme) => {
 
     try {
 
-        let sql
-
-        if(dadosFilme.data_relancamento == null || dadosFilme.data_relancamento == '' || dadosFilme.data_relancamento == undefined){    
-            
-            sql = `insert into tbl_filme(
-                                            nome,
-                                            sinopse,
-                                            duracao,
-                                            data_lancamento,
-                                            data_relancamento,
-                                            foto_capa,
-                                            foto_banner,
-                                            id_classificacao,
-                                            destaque
-                                        ) values (
-                                            '${dadosFilme.nome}',
-                                            '${dadosFilme.sinopse}',
-                                            '${dadosFilme.duracao}',
-                                            '${dadosFilme.data_lancamento}',
-                                            null,
-                                            '${dadosFilme.foto_capa}',
-                                            '${dadosFilme.foto_banner}',
-                                            ${dadosFilme.id_classificacao},
-                                            'false'
-                                        )`
-            
-        } else {
-
-            sql = `insert into tbl_filme(
-                                            nome,
-                                            sinopse,
-                                            duracao,
-                                            data_lancamento,
-                                            data_relancamento,
-                                            foto_capa,
-                                            foto_banner,
-                                            id_classificacao,
-                                            destaque
-                                        ) values (
-                                            '${dadosFilme.nome}',
-                                            '${dadosFilme.sinopse}',
-                                            '${dadosFilme.duracao}',
-                                            '${dadosFilme.data_lancamento}',
-                                            '${dadosFilme.data_relancamento}',
-                                            '${dadosFilme.foto_capa}',
-                                            '${dadosFilme.foto_banner}',
-                                            ${dadosFilme.id_classificacao},
-                                            'false'
-                                        )`
-
-        }
+        let sql = `insert into tbl_filme(nome, sinopse, duracao, data_lancamento, foto_capa, foto_banner, destaque, link_trailer, id_classificacao) values ('${dadosFilme.nome}','${dadosFilme.sinopse}','${dadosFilme.duracao}','${dadosFilme.data_lancamento}','${dadosFilme.foto_capa}','${dadosFilme.foto_banner}', ${dadosFilme.destaque}, '${dadosFilme.link_trailer}', ${dadosFilme.id_classificacao})`
 
         // Executa o sciptSQL no DB (devemos usar o comando execute e não o query)
         // O comando execute deve ser utilizado para INSERT, UPDATE, DELETE
@@ -91,33 +41,8 @@ const updateFilme = async (dadosFilme, idFilme) => {
 
     try {
 
-        let sql
-
-        if(dadosFilme.data_relancamento == null || dadosFilme.data_relancamento == '' || dadosFilme.data_relancamento == undefined){    
-            
-            sql = `update tbl_filme set 
-                                        nome = '${dadosFilme.nome}',
-                                        sinopse = '${dadosFilme.sinopse}',
-                                        duracao = '${dadosFilme.duracao}',
-                                        data_lancamento = '${dadosFilme.data_lancamento}',
-                                        data_relancamento = null,
-                                        foto_capa = '${dadosFilme.foto_capa}',
-                                        valor_unitario = ${dadosFilme.valor_unitario}
-                                    where id = ${idFilme}`
-            
-        } else {
-
-            sql = `update tbl_filme set 
-                                        nome = '${dadosFilme.nome}',
-                                        sinopse = '${dadosFilme.sinopse}',
-                                        duracao = '${dadosFilme.duracao}',
-                                        data_lancamento = '${dadosFilme.data_lancamento}',
-                                        data_relancamento = '${dadosFilme.data_relancamento}',
-                                        foto_capa = '${dadosFilme.foto_capa}',
-                                        valor_unitario = ${dadosFilme.valor_unitario}
-                                    where id = ${idFilme}`
-
-        }
+        let sql = `update tbl_filme set nome = '${dadosFilme.nome}', sinopse = '${dadosFilme.sinopse}', duracao = '${dadosFilme.duracao}', data_lancamento = '${dadosFilme.data_lancamento}', foto_capa = '${dadosFilme.foto_capa}', foto_capa = '${dadosFilme.foto_capa}',foto_banner = '${dadosFilme.foto_banner}', destaque = ${dadosFilme.destaque}, link_trailer = '${dadosFilme.link_trailer}', id_classificacao = ${dadosFilme.id_classificacao} where id = ${idFilme}`
+                   
 
         // Executa o sciptSQL no DB (devemos usar o comando execute e não o query)
         // O comando execute deve ser utilizado para INSERT, UPDATE, DELETE
@@ -165,8 +90,8 @@ const selectAllFilmes = async () => {
     try {
 
         // Script sql para listar todos os registros
-        let sql = 'call procListaFilme(0)'
-
+        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i:%S') as duracao, date_format(tf.data_lancamento, '%d-%m-%Y') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as classificacao, tc.classificacao_indicativa from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id order by tf.id desc`
+        
         // $queryRawUnsafe(sql) -- Encaminha apenas a variável
         // $queryRaw('select * from table tbl_filmes') -- Encaminha o script
 
@@ -190,7 +115,7 @@ const selectByIdFilme = async (id) => {
     try {
 
         // Realiza a busca do Filme pelo ID
-        let sql = `call procListaFilme(${id})`
+        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i:%S') as duracao, date_format(tf.data_lancamento, '%d-%m-%Y') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as classificacao, tc.classificacao_indicativa from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id where tf.id = ${id}`
 
         // Executa no Banco de Dado o script SQL
         let rsFilmes = await prisma.$queryRawUnsafe(sql)
@@ -212,7 +137,7 @@ const selectByName = async (nome) => {
     try {
 
         // Script sql para listar todos os registros
-        let sql = `select * from tbl_filme where tbl_filme.nome like '%${nome}%'`
+        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i:%S') as duracao, date_format(tf.data_lancamento, '%d-%m-%Y') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as classificacao, tc.classificacao_indicativa from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id where tf.nome like '%${nome}%'`
 
         // $queryRawUnsafe(sql) -- Encaminha apenas a variável
         // $queryRaw('select * from table tbl_filmes') -- Encaminha o script
