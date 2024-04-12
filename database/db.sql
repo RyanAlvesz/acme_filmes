@@ -419,8 +419,7 @@ where id = 2;
 
 select cast(last_insert_id() as DECIMAL) as id from tbl_filme limit 1;
 select id, nome, sinopse, time_format(duracao, '%H:%i:%S') as duracao, date_format(data_lancamento, '%Y-%m-%d') as data_lancamento, date_format(data_relancamento, '%Y-%m-%d') as data_relancamento, foto_capa, valor_unitario from tbl_filme order by id desc;
-
-select * from tbl_ator order by id desc;
+select id, nome, foto, biografia, date_format(data_nascimento, '%d-%m-%Y') as data_nascimento, date_format(data_falecimento, '%Y-%m-%d') as data_falecimento from tbl_ator order by id desc;
 
 # Procedures
 # Permite criar uma procedure

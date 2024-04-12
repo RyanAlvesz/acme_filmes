@@ -21,7 +21,7 @@ const setNovaNacionalidadeAtor = async(dadosNacionalidadeAtor, contentType) => {
             let resultDadosNacionalidadeAtor = {}
 
             let nacionalidade = await controllerNacionalidades.getBuscarNacionalidade(dadosNacionalidadeAtor.id_nacionalidade)
-            let ator = await controllerAtores.getBuscarAtores(dadosNacionalidadeAtor.id_ator)
+            let ator = await controllerAtores.getBuscarAtor(dadosNacionalidadeAtor.id_ator)
 
             if(
                 dadosNacionalidadeAtor.id_nacionalidade == '' || dadosNacionalidadeAtor.id_nacionalidade == undefined ||
@@ -80,7 +80,7 @@ const setAtualizarNacionalidadeAtor = async(dadosNacionalidadeAtor, contentType,
             let resultDadosNacionalidadeAtor = {}
 
             let nacionalidade = await controllerNacionalidades.getBuscarNacionalidade(dadosNacionalidadeAtor.id_nacionalidade)
-            let ator = await controllerAtores.getBuscarAtores(dadosNacionalidadeAtor.id_ator)
+            let ator = await controllerAtores.getBuscarAtor(dadosNacionalidadeAtor.id_ator)
         
             if( 
                 idNacionalidadeAtor == ''             || idNacionalidadeAtor == undefined             ||

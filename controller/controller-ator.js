@@ -141,7 +141,7 @@ const setExcluirAtor = async(id) => {
     try {
         
         let idAtor = id
-        let validacaoAtor = await getBuscarAtores(idAtor)
+        let validacaoAtor = await getBuscarAtor(idAtor)
 
         if(idAtor == '' || idAtor == undefined || isNaN(idAtor)){
             
@@ -217,7 +217,7 @@ const getListarAtores = async() => {
 }
 
 //Função para buscar ator pelo id
-const getBuscarAtores = async(id) => {
+const getBuscarAtor = async(id) => {
 
     try {
     
@@ -305,5 +305,5 @@ module.exports = {
     setAtualizarAtor,
     setExcluirAtor,
     getListarAtores,
-    getBuscarAtores
+    getBuscarAtor
 }

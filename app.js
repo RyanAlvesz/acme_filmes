@@ -32,14 +32,18 @@ const funcoes = require('./controller/funcoes.js')
 const controllerClassificacoes          = require('./controller/controller-classificacao.js')
 const controllerFilmes                  = require('./controller/controller-filme.js')
 const controllerDiretores               = require('./controller/controller-diretor.js')
+const controllerFilmesDiretores         = require('./controller/controller-filme-diretor.js')
 const controllerGeneros                 = require('./controller/controller-genero.js')
+const controllerFilmesGeneros           = require('./controller/controller-filme-genero.js')
 const controllerNacionalidades          = require('./controller/controller-nacionalidade.js')
 const controllerAtores                  = require('./controller/controller-ator.js')
+const controllerFilmesAtores            = require('./controller/controller-filme-ator.js')
 const controllerNacionalidadesAtores    = require('./controller/controller-nacionalidade-ator.js')
 const controllerUsuarios                = require('./controller/controller-usuario.js')
 const controllerCategoriasFotoPerfil    = require('./controller/controller-categoria-foto-perfil.js')
 const controllerFotosPerfil             = require('./controller/controller-foto-perfil.js')
 const controllerPerfis                  = require('./controller/controller-perfil.js')
+const controllerFilmesFavoritos         = require('./controller/controller-filme-favorito.js')
 const controllerFuncionarios            = require('./controller/controller-funcionario.js')
 /********************************************************************************************************/
 
@@ -284,6 +288,62 @@ app.put('/v2/acme_filmes/diretor/:id', cors(), bodyParserJson, async (request, r
 
 
 
+// #region FILMES E DIRETORES
+
+// EndPoint: Listar todos as relações de filmes e diretores e suas informações
+app.get('/v2/acme_filmes/filmes_diretores', cors(), async (request, response, next) => {
+
+    let dadosFilmesDiretores = await controllerFilmesDiretores.getListarFilmesDiretores()
+    response.status(dadosFilmesDiretores.status_code)
+    response.json(dadosFilmesDiretores)
+
+})
+
+// EndPoint: Listar os dados da relação de filme e diretor filtrando pelo id
+app.get('/v2/acme_filmes/filme_diretor/:id', cors(), async (request, response, next) => {
+
+    let idFilmeDiretor = request.params.id
+    let dadosFilmeDiretor = await controllerFilmesDiretores.getBuscarFilmeDiretor(idFilmeDiretor)
+    response.status(dadosFilmeDiretor.status_code);
+    response.json(dadosFilmeDiretor)
+
+})
+
+// EndPoint: Inserir novas relações de filme e diretores no Banco de Dados
+app.post('/v2/acme_filmes/filme_diretor/', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerFilmesDiretores.setNovoFilmeDiretor(dadosBody, contentType)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
+// EndPoint: Deletar diretor de um filme por id
+app.delete('/v2/acme_filmes/filme_diretor/:id', cors(), async (request, response, next) => {
+
+    let idFilmeDiretor = request.params.id
+    let dadosFilmeDiretor = await controllerFilmesDiretores.setExcluirFilmeDiretor(idFilmeDiretor)
+    response.status(dadosFilmeDiretor.status_code);
+    response.json(dadosFilmeDiretor)
+
+})
+
+// EndPoint: Atualizar diretor de um filme por id
+app.put('/v2/acme_filmes/filme_diretor/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let idFilmeDiretor = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerFilmesDiretores.setAtualizarFilmeDiretor(dadosBody, contentType, idFilmeDiretor)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
+
+
 // #region GÊNEROS
 
 // EndPoint: Listar todos os gêneros e suas informações
@@ -333,6 +393,62 @@ app.put('/v2/acme_filmes/genero/:id', cors(), bodyParserJson, async (request, re
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDados = await controllerGeneros.setAtualizarGenero(dadosBody, contentType, idGenero)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
+
+
+// #region FILMES E GÊNEROS
+
+// EndPoint: Listar todos as relações de filmes e gêneros e suas informações
+app.get('/v2/acme_filmes/filmes_generos', cors(), async (request, response, next) => {
+
+    let dadosFilmesGeneros = await controllerFilmesGeneros.getListarFilmesGeneros()
+    response.status(dadosFilmesGeneros.status_code)
+    response.json(dadosFilmesGeneros)
+
+})
+
+// EndPoint: Listar os dados da relação de filme e gênero filtrando pelo id
+app.get('/v2/acme_filmes/filme_genero/:id', cors(), async (request, response, next) => {
+
+    let idFilmeGenero = request.params.id
+    let dadosFilmeGenero = await controllerFilmesGeneros.getBuscarFilmeGenero(idFilmeGenero)
+    response.status(dadosFilmeGenero.status_code);
+    response.json(dadosFilmeGenero)
+
+})
+
+// EndPoint: Inserir novas relações de filme e gêneros no Banco de Dados
+app.post('/v2/acme_filmes/filme_genero/', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerFilmesGeneros.setNovoFilmeGenero(dadosBody, contentType)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
+// EndPoint: Deletar gênero de um filme por id
+app.delete('/v2/acme_filmes/filme_genero/:id', cors(), async (request, response, next) => {
+
+    let idFilmeGenero = request.params.id
+    let dadosFilmeGenero = await controllerFilmesGeneros.setExcluirFilmeGenero(idFilmeGenero)
+    response.status(dadosFilmeGenero.status_code);
+    response.json(dadosFilmeGenero)
+
+})
+
+// EndPoint: Atualizar gênero de um filme por id
+app.put('/v2/acme_filmes/filme_genero/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let idFilmeGenero = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerFilmesGeneros.setAtualizarFilmeGenero(dadosBody, contentType, idFilmeGenero)
     response.status(resultDados.status_code);
     response.json(resultDados)
 
@@ -411,7 +527,7 @@ app.get('/v2/acme_filmes/atores', cors(), async (request, response, next) => {
 app.get('/v2/acme_filmes/ator/:id', cors(), async (request, response, next) => {
 
     let idAtor = request.params.id
-    let dadosAtor = await controllerAtores.getBuscarAtores(idAtor)
+    let dadosAtor = await controllerAtores.getBuscarAtor(idAtor)
     response.status(dadosAtor.status_code);
     response.json(dadosAtor)
 
@@ -445,6 +561,62 @@ app.put('/v2/acme_filmes/ator/:id', cors(), bodyParserJson, async (request, resp
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDados = await controllerAtores.setAtualizarAtor(dadosBody, contentType, idAtor)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
+
+
+// #region FILMES E ATORES
+
+// EndPoint: Listar todos as relações de filmes e atores e suas informações
+app.get('/v2/acme_filmes/filmes_atores', cors(), async (request, response, next) => {
+
+    let dadosFilmesAtores = await controllerFilmesAtores.getListarFilmesAtores()
+    response.status(dadosFilmesAtores.status_code)
+    response.json(dadosFilmesAtores)
+
+})
+
+// EndPoint: Listar os dados da relação de filme e ator filtrando pelo id
+app.get('/v2/acme_filmes/filme_ator/:id', cors(), async (request, response, next) => {
+
+    let idFilmeAtor = request.params.id
+    let dadosFilmeAtor = await controllerFilmesAtores.getBuscarFilmeAtor(idFilmeAtor)
+    response.status(dadosFilmeAtor.status_code);
+    response.json(dadosFilmeAtor)
+
+})
+
+// EndPoint: Inserir novas relações de filme e atores no Banco de Dados
+app.post('/v2/acme_filmes/filme_ator/', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerFilmesAtores.setNovoFilmeAtor(dadosBody, contentType)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
+// EndPoint: Deletar ator de um filme por id
+app.delete('/v2/acme_filmes/filme_ator/:id', cors(), async (request, response, next) => {
+
+    let idFilmeAtor = request.params.id
+    let dadosFilmeAtor = await controllerFilmesAtores.setExcluirFilmeAtor(idFilmeAtor)
+    response.status(dadosFilmeAtor.status_code);
+    response.json(dadosFilmeAtor)
+
+})
+
+// EndPoint: Atualizar ator de um filme por id
+app.put('/v2/acme_filmes/filme_ator/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let idFilmeAtor = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerFilmesAtores.setAtualizarFilmeAtor(dadosBody, contentType, idFilmeAtor)
     response.status(resultDados.status_code);
     response.json(resultDados)
 
@@ -722,6 +894,62 @@ app.put('/v2/acme_filmes/perfil/:id', cors(), bodyParserJson, async (request, re
     let contentType = request.headers['content-type']
     let dadosBody = request.body
     let resultDados = await controllerPerfis.setAtualizarPerfil(dadosBody, contentType, idPerfil)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
+
+
+// #region FILME FAVORITO
+
+// EndPoint: Listar todos os filmes favoritos e suas informações
+app.get('/v2/acme_filmes/filmes_favoritos', cors(), async (request, response, next) => {
+
+    let dadosFilmesFavoritos = await controllerFilmesFavoritos.getListarFilmesFavorito()
+    response.status(dadosFilmesFavoritos.status_code)
+    response.json(dadosFilmesFavoritos)
+
+})
+
+// EndPoint: Listar os dados do filme favorito filtrando pelo id
+app.get('/v2/acme_filmes/filme_favorito/:id', cors(), async (request, response, next) => {
+
+    let idFilmeFavorito = request.params.id
+    let dadosFilmeFavorito = await controllerFilmesFavoritos.getBuscarFilmeFavorito(idFilmeFavorito)
+    response.status(dadosFilmeFavorito.status_code);
+    response.json(dadosFilmeFavorito)
+
+})
+
+// EndPoint: Inserir novos filmes favoritos no Banco de Dados
+app.post('/v2/acme_filmes/filme_favorito/', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerFilmesFavoritos.setNovoFilmeFavorito(dadosBody, contentType)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
+// EndPoint: Deletar filme favorito por id
+app.delete('/v2/acme_filmes/filme_favorito/:id', cors(), async (request, response, next) => {
+
+    let idFilmeFavorito = request.params.id
+    let dadosFilmeFavorito = await controllerFilmesFavoritos.setExcluirFilmeFavorito(idFilmeFavorito)
+    response.status(dadosFilmeFavorito.status_code);
+    response.json(dadosFilmeFavorito)
+
+})
+
+// EndPoint: Atualizar filme favorito por id
+app.put('/v2/acme_filmes/filme_favorito/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let idFilmeFavorito = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerFilmesFavoritos.setAtualizarFilmeFavorito(dadosBody, contentType, idFilmeFavorito)
     response.status(resultDados.status_code);
     response.json(resultDados)
 

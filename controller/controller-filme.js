@@ -32,7 +32,7 @@ const setNovoFilme = async(dadosFilme, contentType) => {
                 dadosFilme.data_lancamento == ''          || dadosFilme.data_lancamento == undefined   || dadosFilme.data_lancamento.length > 10    || 
                 dadosFilme.foto_capa == ''                || dadosFilme.foto_capa == undefined         || dadosFilme.foto_capa.length > 65535       ||
                 dadosFilme.foto_banner == ''              || dadosFilme.foto_banner == undefined       || dadosFilme.foto_banner.length > 65535     ||
-                dadosFilme.destaque == undefined          || dadosFilme.destaque.length > 5            ||
+                dadosFilme.destaque == undefined          || dadosFilme.destaque.length > 1            ||
                 dadosFilme.link_trailer == ''             || dadosFilme.link_trailer == undefined      || dadosFilme.link_trailer.length > 200      ||
                 dadosFilme.id_classificacao == ''         || dadosFilme.id_classificacao == undefined  ||
                 validacaoClassificacao.status == false  
@@ -90,63 +90,46 @@ const setAtualizarFilme = async(dadosFilme, contentType, idFilme) => {
         if(String(contentType).toLowerCase() == 'application/json'){
 
             let resultDadosFilme = {}
+            let validacaoClassificacao = await controllerClassificacoes.getBuscarClassificacao(dadosFilme.id_classificacao)
         
             //Validação para tratar campos obrigatórios e quantide de caracteres
-            if( idFilme == ''                             || idFilme == undefined                      ||
+            if( 
+                idFilme == ''                             || idFilme == undefined                      ||
                 dadosFilme.nome == ''                     || dadosFilme.nome == undefined              || dadosFilme.nome.length > 80               ||
                 dadosFilme.sinopse == ''                  || dadosFilme.sinopse == undefined           || dadosFilme.sinopse.length > 65535         || 
                 dadosFilme.duracao == ''                  || dadosFilme.duracao == undefined           || dadosFilme.duracao.length > 8             || 
                 dadosFilme.data_lancamento == ''          || dadosFilme.data_lancamento == undefined   || dadosFilme.data_lancamento.length > 10    || 
-                dadosFilme.foto_capa == ''                || dadosFilme.foto_capa == undefined         || dadosFilme.foto_capa.length > 200         ||
-                dadosFilme.valor_unitario.length > 5  
-             ){
+                dadosFilme.foto_capa == ''                || dadosFilme.foto_capa == undefined         || dadosFilme.foto_capa.length > 65535       ||
+                dadosFilme.foto_banner == ''              || dadosFilme.foto_banner == undefined       || dadosFilme.foto_banner.length > 65535     ||
+                dadosFilme.destaque == undefined          || dadosFilme.destaque.length > 1            ||
+                dadosFilme.link_trailer == ''             || dadosFilme.link_trailer == undefined      || dadosFilme.link_trailer.length > 200      ||
+                dadosFilme.id_classificacao == ''         || dadosFilme.id_classificacao == undefined  ||
+                validacaoClassificacao.status == false   
+            ){
                 
                 return message.ERROR_REQUIRED_FIELDS // 400
                 
             }else{
                 
-                let dadosValidated = false
-        
-                // Validação de digitação para data de relancamento que não é um campo obrigatório
-                if  (   dadosFilme.data_relancamento != null &&
-                        dadosFilme.data_relancamento != ''   &&
-                        dadosFilme.data_relancamento != undefined 
-                    ){    
-        
-                        if(dadosFilme.data_relancamento.length != 10)
-                            return message.ERROR_REQUIRED_FIELDS // 400
-                        else
-                            dadosValidated = true
-        
-                } else {
-                    dadosValidated = true
-                }
-        
-                if(dadosValidated){
-        
-                    //Envia os dados para a model inserir no BD
-                    let filmeAtualizado = await filmesDAO.updateFilme(dadosFilme, idFilme)
-                                           
-                    // Adiciona o ID do Filme no JSON para retornar
-                    dadosFilme.id = idFilme
+                //Envia os dados para a model inserir no BD
+                let filmeAtualizado = await filmesDAO.updateFilme(dadosFilme, idFilme)
+                                        
+                dadosFilme.classificacao = validacaoClassificacao.classificacao[0].sigla
+                dadosFilme.classificacao_indicativa = validacaoClassificacao.classificacao[0].classificacao_indicativa
 
-                    //Valida se o BD inseriu corretamente os dados
-                    if(filmeAtualizado){
-                        resultDadosFilme.status = message.UPDATED_ITEM.status
-                        resultDadosFilme.status_code = message.UPDATED_ITEM.status_code
-                        resultDadosFilme.message = message.UPDATED_ITEM.message
-                        resultDadosFilme.filme = dadosFilme
-                        return resultDadosFilme
-                    }else {
+                // Adiciona o ID do Filme no JSON para retornar
+                dadosFilme.id = idFilme
 
-                        return message.ERROR_INTERNAL_SERVER_DB // 500
+                //Valida se o BD inseriu corretamente os dados
+                if(filmeAtualizado){
+                    resultDadosFilme.status = message.UPDATED_ITEM.status
+                    resultDadosFilme.status_code = message.UPDATED_ITEM.status_code
+                    resultDadosFilme.message = message.UPDATED_ITEM.message
+                    resultDadosFilme.filme = dadosFilme
+                    return resultDadosFilme
+                }else {
 
-                    }
-        
-        
-                } else {
-
-                    return message.ERROR_REQUIRED_FIELDS // 400
+                    return message.ERROR_INTERNAL_SERVER_DB // 500
 
                 }
                 
