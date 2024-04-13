@@ -148,7 +148,7 @@ const getListarNacionalidades = async() => {
 
     try {
         let nacionalidadeJSON = {}
-        let dadosNacionalidade = await nacionalidadesDAO.selectAllNacionalidade()
+        let dadosNacionalidade = await nacionalidadesDAO.selectAllNacionalidades()
 
         if(dadosNacionalidade){
             

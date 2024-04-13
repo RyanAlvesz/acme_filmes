@@ -134,6 +134,7 @@ create table tbl_categoria_foto_perfil (
 create table tbl_foto_perfil (
 	id integer not null auto_increment primary key,
     foto text,
+    nome varchar(50),
     id_categoria_foto_perfil integer not null,
         
 	unique index(id),
@@ -370,9 +371,11 @@ insert into tbl_categoria_foto_perfil (
 
 insert into tbl_foto_perfil (
 					foto,
+                    nome,
 					id_categoria_foto_perfil
 				 ) values (
 					'https://www.indiewire.com/wp-content/uploads/2018/07/Screen-Shot-2018-07-18-at-3.05.24-PM.png',
+                    'Django',
                     1
                  );
                  
@@ -420,6 +423,27 @@ where id = 2;
 select cast(last_insert_id() as DECIMAL) as id from tbl_filme limit 1;
 select id, nome, sinopse, time_format(duracao, '%H:%i:%S') as duracao, date_format(data_lancamento, '%Y-%m-%d') as data_lancamento, date_format(data_relancamento, '%Y-%m-%d') as data_relancamento, foto_capa, valor_unitario from tbl_filme order by id desc;
 select id, nome, foto, biografia, date_format(data_nascimento, '%d-%m-%Y') as data_nascimento, date_format(data_falecimento, '%Y-%m-%d') as data_falecimento from tbl_ator order by id desc;
+
+select ta.nome, tf.nome
+from tbl_filme as tf 
+inner join tbl_classificacao as tc 
+on tf.id_classificacao=tc.id 
+inner join tbl_filme_ator as tfa
+on tf.id=tfa.id_ator
+inner join tbl_ator as ta
+on tfa.id_ator=ta.id
+where tfa.id_ator = 3;
+
+select * from tbl_filme_ator;
+
+select MIN(id) as id from tbl_filme;
+select id from tbl_filme where destaque = true;
+update tbl_filme set destaque = false where id = 1;
+select id, destaque from tbl_filme;
+
+
+
+
 
 # Procedures
 # Permite criar uma procedure

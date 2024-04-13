@@ -79,6 +79,19 @@ const selectByIdGenero = async (id) => {
 
 }
 
+// Buscar os gêneros de um filme filtrando pelo ID
+const selectAllGenerosByFilme = async (id) => {
+
+    try {
+        let sql = `select tg.id, tg.nome from tbl_genero as tg inner join tbl_filme_genero as tfg on tg.id=tfg.id_genero where tfg.id_filme = ${id}`
+        let rsGenero = await prisma.$queryRawUnsafe(sql)
+        return rsGenero
+    } catch (error) {
+        return false
+    }
+
+}
+
 // Buscar o id do último item da tabela
 const selectLastId = async () => {
    
@@ -97,6 +110,7 @@ module.exports = {
     updateGenero,
     deleteGenero,
     selectAllGeneros,
+    selectAllGenerosByFilme,
     selectByIdGenero,
     selectLastId
 }

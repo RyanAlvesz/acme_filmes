@@ -155,6 +155,16 @@ app.get('/v2/acme_filmes/filmes', cors(), async (request, response, next) => {
 
 })
 
+// EndPoint: Listar os dados do filme filtrando pelo id
+app.get('/v2/acme_filmes/filme/destaque/', cors(), async (request, response, next) => {
+    
+    let dadosFilme = await controllerFilmes.getListarFilmeDestaque()
+
+    response.status(dadosFilme.status_code);
+    response.json(dadosFilme)
+
+})
+
 // EndPoint: Listar todos os filmes ceorrespondentes com o filtro
 app.get('/v2/acme_filmes/filmes/filtro', cors(), async (request, response, next) => {
 
@@ -174,6 +184,46 @@ app.get('/v2/acme_filmes/filme/:id', cors(), async (request, response, next) => 
     let idFilme = request.params.id
     
     let dadosFilme = await controllerFilmes.getBuscarFilme(idFilme)
+    
+    response.status(dadosFilme.status_code);
+    response.json(dadosFilme)
+
+})
+
+
+// EndPoint: Listar filmes filtrando pelo id do ator
+app.get('/v2/acme_filmes/filmes/ator/:id', cors(), async (request, response, next) => {
+
+    // Recebe o id da requisição
+    let idAtor = request.params.id
+    
+    let dadosFilme = await controllerFilmes.getListarFilmesAtor(idAtor)
+    
+    response.status(dadosFilme.status_code);
+    response.json(dadosFilme)
+
+})
+
+// EndPoint: Listar filmes filtrando pelo id do gênero
+app.get('/v2/acme_filmes/filmes/genero/:id', cors(), async (request, response, next) => {
+
+    // Recebe o id da requisição
+    let idGenero = request.params.id
+    
+    let dadosFilme = await controllerFilmes.getListarFilmesGenero(idGenero)
+    
+    response.status(dadosFilme.status_code);
+    response.json(dadosFilme)
+
+})
+
+// EndPoint: Listar filmes filtrando pelo id do ator
+app.get('/v2/acme_filmes/filmes/perfil/:id', cors(), async (request, response, next) => {
+
+    // Recebe o id da requisição
+    let idPerfil = request.params.id
+    
+    let dadosFilme = await controllerFilmes.getListarFilmesFavoritosPerfil(idPerfil)
     
     response.status(dadosFilme.status_code);
     response.json(dadosFilme)
@@ -230,6 +280,31 @@ app.put('/v2/acme_filmes/filme/:id', cors(), bodyParserJson, async (request, res
 
 })
 
+// EndPoint: Adicionar destaque no filme por id
+app.put('/v2/acme_filmes/filme/add_destaque/:id', cors(), async (request, response, next) => {
+
+    // Recebe o id da requisição
+    let idFilme = request.params.id    
+    let dadosFilme = await controllerFilmes.setAdicionarDestaque(idFilme)
+    
+    response.status(dadosFilme.status_code);
+    response.json(dadosFilme)
+
+})
+
+// EndPoint: Remover destaque no filme por id
+app.put('/v2/acme_filmes/filme/rem_destaque/:id', cors(), async (request, response, next) => {
+
+    // Recebe o id da requisição
+    let idFilme = request.params.id
+    
+    let dadosFilme = await controllerFilmes.setRemoverDestaque(idFilme, false)
+    
+    response.status(dadosFilme.status_code);
+    response.json(dadosFilme)
+
+})
+
 
 
 // #region DIRETORES
@@ -248,6 +323,16 @@ app.get('/v2/acme_filmes/diretor/:id', cors(), async (request, response, next) =
 
     let idDiretor = request.params.id
     let dadosDiretor = await controllerDiretores.getBuscarDiretor(idDiretor)
+    response.status(dadosDiretor.status_code);
+    response.json(dadosDiretor)
+
+})
+
+// EndPoint: Listar os diretores de um filme filtrando pelo id
+app.get('/v2/acme_filmes/diretores/filme/:id', cors(), async (request, response, next) => {
+
+    let idFilme = request.params.id
+    let dadosDiretor = await controllerDiretores.getListarDiretoresFilme(idFilme)
     response.status(dadosDiretor.status_code);
     response.json(dadosDiretor)
 
@@ -360,6 +445,16 @@ app.get('/v2/acme_filmes/genero/:id', cors(), async (request, response, next) =>
 
     let idGenero = request.params.id
     let dadosGenero = await controllerGeneros.getBuscarGenero(idGenero)
+    response.status(dadosGenero.status_code);
+    response.json(dadosGenero)
+
+})
+
+// EndPoint: Listar os gêneros de um filme filtrando pelo id
+app.get('/v2/acme_filmes/generos/filme/:id', cors(), async (request, response, next) => {
+
+    let idFilme = request.params.id
+    let dadosGenero = await controllerGeneros.getListarGenerosFilme(idFilme)
     response.status(dadosGenero.status_code);
     response.json(dadosGenero)
 
@@ -528,6 +623,16 @@ app.get('/v2/acme_filmes/ator/:id', cors(), async (request, response, next) => {
 
     let idAtor = request.params.id
     let dadosAtor = await controllerAtores.getBuscarAtor(idAtor)
+    response.status(dadosAtor.status_code);
+    response.json(dadosAtor)
+
+})
+
+// EndPoint: Listar os atores de um filme filtrando pelo id
+app.get('/v2/acme_filmes/atores/filme/:id', cors(), async (request, response, next) => {
+
+    let idFilme = request.params.id
+    let dadosAtor = await controllerAtores.getListarAtoresFilme(idFilme)
     response.status(dadosAtor.status_code);
     response.json(dadosAtor)
 
@@ -810,6 +915,16 @@ app.get('/v2/acme_filmes/foto_perfil/:id', cors(), async (request, response, nex
 
 })
 
+// EndPoint: Listar as fotos de perfil de uma categoria filtrando pelo id
+app.get('/v2/acme_filmes/foto_perfil/categoria/:id', cors(), async (request, response, next) => {
+
+    let idCategoria = request.params.id
+    let dadosFotoPerfil = await controllerFotosPerfil.getListarFotosPerfilCategoria(idCategoria)
+    response.status(dadosFotoPerfil.status_code);
+    response.json(dadosFotoPerfil)
+
+})
+
 // EndPoint: Inserir novas fotos de perfil no Banco de Dados
 app.post('/v2/acme_filmes/foto_perfil/', cors(), bodyParserJson, async (request, response, next) => {
 
@@ -861,6 +976,16 @@ app.get('/v2/acme_filmes/perfil/:id', cors(), async (request, response, next) =>
 
     let idPerfil = request.params.id
     let dadosPerfil = await controllerPerfis.getBuscarPerfil(idPerfil)
+    response.status(dadosPerfil.status_code);
+    response.json(dadosPerfil)
+
+})
+
+// EndPoint: Listar os todos os perfil de um usuário filtrando pelo id
+app.get('/v2/acme_filmes/perfis/usuario/:id', cors(), async (request, response, next) => {
+
+    let idUsuario = request.params.id
+    let dadosPerfil = await controllerPerfis.getListarPerfisUsuario(idUsuario)
     response.status(dadosPerfil.status_code);
     response.json(dadosPerfil)
 

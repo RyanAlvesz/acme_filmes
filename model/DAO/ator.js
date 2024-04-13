@@ -97,6 +97,19 @@ const selectByIdAtor = async (id) => {
 
 }
 
+// Buscar os atores de um filme filtrando pelo ID
+const selectAllAtoresByFilme = async (id) => {
+
+    try {
+        let sql = `select ta.id, ta.nome, ta.foto, ta.biografia, date_format(ta.data_nascimento, '%d-%m-%Y') as data_nascimento, date_format(ta.data_falecimento, '%d-%m-%Y') as data_falecimento from tbl_ator as ta inner join tbl_filme_ator as tfa on ta.id=tfa.id_ator where tfa.id_filme = ${id}`
+        let rsAtor = await prisma.$queryRawUnsafe(sql)
+        return rsAtor
+    } catch (error) {
+        return false
+    }
+
+}
+
 // Buscar o id do último item da tabela
 const selectLastId = async () => {
    
@@ -115,6 +128,7 @@ module.exports = {
     updateAtor,
     deleteAtor,
     selectAllAtores,
+    selectAllAtoresByFilme,
     selectByIdAtor,
     selectLastId
 }

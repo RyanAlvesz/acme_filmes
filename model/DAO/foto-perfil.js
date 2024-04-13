@@ -12,7 +12,7 @@ const prisma = new PrismaClient()
 const insertFotoPerfil = async (dadosFotoPerfil) => {
 
     try {
-        let sql = `insert into tbl_foto_perfil (foto, id_categoria_foto_perfil) values ('${dadosFotoPerfil.foto}', ${dadosFotoPerfil.id_categoria_foto_perfil})`
+        let sql = `insert into tbl_foto_perfil (foto, nome, id_categoria_foto_perfil) values ('${dadosFotoPerfil.foto}', '${dadosFotoPerfil.nome}', ${dadosFotoPerfil.id_categoria_foto_perfil})`
         let resultStatus = await prisma.$executeRawUnsafe(sql)
         if(resultStatus)
             return true
@@ -28,7 +28,7 @@ const insertFotoPerfil = async (dadosFotoPerfil) => {
 const updateFotoPerfil = async (dadosFotoPerfil, idFotoPerfil) => {
 
     try {
-        let sql = `update tbl_foto_perfil set foto = '${dadosFotoPerfil.foto}', id_categoria_foto_perfil = ${dadosFotoPerfil.id_categoria_foto_perfil} where id = ${idFotoPerfil}`   
+        let sql = `update tbl_foto_perfil set foto = '${dadosFotoPerfil.foto}', nome = '${dadosFotoPerfil.nome}', id_categoria_foto_perfil = ${dadosFotoPerfil.id_categoria_foto_perfil} where id = ${idFotoPerfil}`   
         let resultStatus = await prisma.$executeRawUnsafe(sql)
         if(resultStatus)
             return true
@@ -57,7 +57,7 @@ const deleteFotoPerfil = async (id) => {
 const selectAllFotosPerfil = async () => {   
 
     try {
-        let sql = 'select tf.id, tf.foto, tc.nome as categoria, tf.id_categoria_foto_perfil as id_categoria from tbl_foto_perfil as tf inner join tbl_categoria_foto_perfil as tc on tf.id_categoria_foto_perfil=tc.id order by id desc'
+        let sql = 'select tf.id, tf.foto, tf.nome, tc.nome as categoria, tf.id_categoria_foto_perfil as id_categoria from tbl_foto_perfil as tf inner join tbl_categoria_foto_perfil as tc on tf.id_categoria_foto_perfil=tc.id order by id desc'
         let rsFotoPerfil = await prisma.$queryRawUnsafe(sql)
         return rsFotoPerfil
     } catch (error) {
@@ -70,7 +70,20 @@ const selectAllFotosPerfil = async () => {
 const selectByIdFotoPerfil = async (id) => {
 
     try {
-        let sql = `select tf.id, tf.foto, tc.nome as categoria, tf.id_categoria_foto_perfil as id_categoria from tbl_foto_perfil as tf inner join tbl_categoria_foto_perfil as tc on tf.id_categoria_foto_perfil=tc.id where tf.id = ${id}`
+        let sql = `select tf.id, tf.foto, tf.nome, tc.nome as categoria, tf.id_categoria_foto_perfil as id_categoria from tbl_foto_perfil as tf inner join tbl_categoria_foto_perfil as tc on tf.id_categoria_foto_perfil=tc.id where tf.id = ${id}`
+        let rsFotoPerfil = await prisma.$queryRawUnsafe(sql)
+        return rsFotoPerfil
+    } catch (error) {
+        return false
+    }
+
+}
+
+// Buscar as foto de perfil de uma categoria filtrando pelo ID
+const selectAllFotosPerfilByCategoria = async (id) => {
+
+    try {
+        let sql = `select tf.id, tf.foto, tf.nome, tc.nome as categoria, tf.id_categoria_foto_perfil as id_categoria from tbl_foto_perfil as tf inner join tbl_categoria_foto_perfil as tc on tf.id_categoria_foto_perfil=tc.id where tc.id = ${id}`
         let rsFotoPerfil = await prisma.$queryRawUnsafe(sql)
         return rsFotoPerfil
     } catch (error) {
@@ -98,5 +111,6 @@ module.exports = {
     deleteFotoPerfil,
     selectAllFotosPerfil,
     selectByIdFotoPerfil,
+    selectAllFotosPerfilByCategoria,
     selectLastId
 }

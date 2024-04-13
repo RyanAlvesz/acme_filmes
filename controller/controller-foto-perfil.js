@@ -20,7 +20,8 @@ const setNovaFotoPerfil = async (dadosFotoPerfil, contentType) => {
             let resultDadosFotoPerfil = {}
             let validacaoCategoriaFotoPerfil = await controllerCategoriasFotoPerfil.getBuscarCategoriaFotoPerfil(dadosFotoPerfil.id_categoria_foto_perfil)
         
-            if( dadosFotoPerfil.foto == ''                     || dadosFotoPerfil.foto == undefined                     || dadosFotoPerfil.foto.length > 65535                    ||
+            if( dadosFotoPerfil.foto == ''                     || dadosFotoPerfil.foto == undefined                     || dadosFotoPerfil.foto.length > 65535 ||
+                dadosFotoPerfil.nome == ''                     || dadosFotoPerfil.nome == undefined                     || dadosFotoPerfil.nome.length > 50    ||
                 dadosFotoPerfil.id_categoria_foto_perfil == '' || dadosFotoPerfil.id_categoria_foto_perfil == undefined ||
                 validacaoCategoriaFotoPerfil.status == false
             ) {
@@ -76,8 +77,9 @@ const setAtualizarFotoPerfil = async (dadosFotoPerfil, contentType, idFotoPerfil
             let validacaoCategoriaFotoPerfil = await controllerCategoriasFotoPerfil.getBuscarCategoriaFotoPerfil(dadosFotoPerfil.id_categoria_foto_perfil)
 
             if( idFotoPerfil == ''                             || idFotoPerfil == undefined                             ||
-                dadosFotoPerfil.foto == ''                     || dadosFotoPerfil.foto == undefined                     || dadosFotoPerfil.foto.length > 65535                   ||
-                dadosFotoPerfil.id_categoria_foto_perfil == '' || dadosFotoPerfil.id_categoria_foto_perfil == undefined || dadosFotoPerfil.id_categoria_foto_perfil.length > 100 ||
+                dadosFotoPerfil.foto == ''                     || dadosFotoPerfil.foto == undefined                     || dadosFotoPerfil.foto.length > 65535 ||
+                dadosFotoPerfil.nome == ''                     || dadosFotoPerfil.nome == undefined                     || dadosFotoPerfil.nome.length > 50    ||
+                dadosFotoPerfil.id_categoria_foto_perfil == '' || dadosFotoPerfil.id_categoria_foto_perfil == undefined || 
                 validacaoCategoriaFotoPerfil.status == false 
             ) {
 
@@ -86,11 +88,11 @@ const setAtualizarFotoPerfil = async (dadosFotoPerfil, contentType, idFotoPerfil
             } else {
 
                 let fotoPerfilAtualizada = await fotosPerfilDAO.updateFotoPerfil(dadosFotoPerfil, idFotoPerfil)
-                let categoria = await controllerCategoriasFotoPerfil.getBuscarCategoriaFotoPerfil(idFotoPerfil)
+                let categoria = await controllerCategoriasFotoPerfil.getBuscarCategoriaFotoPerfil(dadosFotoPerfil.id_categoria_foto_perfil)
 
                 dadosFotoPerfil.categoria = categoria.categoria[0].nome
                 dadosFotoPerfil.id = idFotoPerfil
-
+                
                 if (fotoPerfilAtualizada) {
                     resultDadosFotoPerfil.status = message.UPDATED_ITEM.status
                     resultDadosFotoPerfil.status_code = message.UPDATED_ITEM.status_code
@@ -218,10 +220,50 @@ const getBuscarFotoPerfil = async (id) => {
 
 }
 
+//Função para listar fotos de perfil de uma categoria por id
+const getListarFotosPerfilCategoria = async (id) => {
+
+    try {
+
+        let idCategoria = id
+        let fotoPefilJSON = {}
+
+        if (idCategoria == '' || idCategoria == undefined || isNaN(idCategoria)) {
+
+            return message.ERROR_INVALID_ID // 400
+
+        } else {
+
+            let dadosFotoPerfil = await fotosPerfilDAO.selectAllFotosPerfilByCategoria(idCategoria)
+
+            if (dadosFotoPerfil) {
+
+                if (dadosFotoPerfil.length > 0) {
+
+                    fotoPefilJSON.fotos = dadosFotoPerfil
+                    fotoPefilJSON.status_code = 200
+                    return fotoPefilJSON
+
+                } else {
+                    return message.ERROR_NOT_FOUND // 404
+                }
+
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB // 500
+            }
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
 module.exports = {
     setNovaFotoPerfil,
     setAtualizarFotoPerfil,
     setExcluirFotoPerfil,
     getListarFotosPerfil,
+    getListarFotosPerfilCategoria,
     getBuscarFotoPerfil
 }

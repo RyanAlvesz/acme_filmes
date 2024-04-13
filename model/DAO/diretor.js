@@ -79,6 +79,19 @@ const selectByIdDiretor = async (id) => {
 
 }
 
+// Buscar os diretores de um filme filtrando pelo ID
+const selectAllDiretoresByFilme = async (id) => {
+
+    try {
+        let sql = `select td.id, td.nome from tbl_diretor as td inner join tbl_filme_diretor as tfd on td.id=tfd.id_diretor where tfd.id_filme = ${id}`
+        let rsDiretor = await prisma.$queryRawUnsafe(sql)
+        return rsDiretor
+    } catch (error) {
+        return false
+    }
+
+}
+
 // Buscar o id do último item da tabela
 const selectLastId = async () => {
    
@@ -97,6 +110,7 @@ module.exports = {
     updateDiretor,
     deleteDiretor,
     selectAllDiretores,
+    selectAllDiretoresByFilme,
     selectByIdDiretor,
     selectLastId
 }

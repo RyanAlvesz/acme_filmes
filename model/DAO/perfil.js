@@ -79,6 +79,19 @@ const selectByIdPerfil = async (id) => {
 
 }
 
+// Buscar perfis de um usuário filtrando pelo ID
+const selectAllPerfisByIdUsuario = async (id) => {
+
+    try {
+        let sql = `select tp.id, tp.apelido, tp.id_usuario, tu.nome as usuario, tp.id_foto_perfil, tf.foto as foto_perfil, tc.nome as categoria_foto_perfil from tbl_perfil as tp inner join tbl_usuario as tu on tp.id_usuario=tu.id inner join tbl_foto_perfil as tf on tp.id_foto_perfil=tf.id inner join tbl_categoria_foto_perfil as tc on tf.id_categoria_foto_perfil=tc.id where tp.id_usuario = ${id}`
+        let rsPerfil = await prisma.$queryRawUnsafe(sql)
+        return rsPerfil
+    } catch (error) {
+        return false
+    }
+
+}
+
 // Buscar o id do último item da tabela
 const selectLastId = async () => {
    
@@ -98,5 +111,6 @@ module.exports = {
     deletePerfil,
     selectAllPerfis,
     selectByIdPerfil,
+    selectAllPerfisByIdUsuario,
     selectLastId
 }

@@ -206,10 +206,50 @@ const getBuscarGenero = async(id) => {
 
 }
 
+//Função para listar gêneros de um filme pelo id
+const getListarGenerosFilme = async(id) => {
+
+    try {
+    
+        let idFilme = id
+        let generoJSON = {}
+
+        if(idFilme == '' || idFilme == undefined || isNaN(idFilme)){
+
+            return message.ERROR_INVALID_ID // 400
+
+        } else {
+
+            let dadosGenero = await generosDAO.selectAllGenerosByFilme(idFilme)
+
+            if(dadosGenero){
+
+                if(dadosGenero.length > 0){
+                    
+                    generoJSON.generos = dadosGenero
+                    generoJSON.status_code = 200
+                    return generoJSON
+
+                }else{
+                    return message.ERROR_NOT_FOUND // 404
+                }
+
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB // 500
+            }
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
 module.exports = {
     setNovoGenero,
     setAtualizarGenero,
     setExcluirGenero,
     getListarGeneros,
+    getListarGenerosFilme,
     getBuscarGenero
 }

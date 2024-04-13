@@ -176,22 +176,15 @@ const getListarAtores = async() => {
 
         let atorJSON = {}
         let dadosAtor = await atoresDAO.selectAllAtores()
-        
-        // dadosAtor.forEach(async ator => {
-        //     let nacionalidades = await getListarNacionalidadesAtor(ator.id)
-        //     if(nacionalidades.status_code == 200){
-        //         ator.nacionalidades = nacionalidades.nacionalidades     
-        //     }            
-        // })
 
-        const promisses = dadosAtor.map(async (ator) => {
+        const promisse = dadosAtor.map(async (ator) => {
             let nacionalidades = await getListarNacionalidadesAtor(ator.id)
             if(nacionalidades.status_code == 200){
                 ator.nacionalidades = nacionalidades.nacionalidades     
             } 
         })
         
-        await Promise.all(promisses)
+        await Promise.all(promisse)
 
         if(dadosAtor){
             
@@ -260,7 +253,55 @@ const getBuscarAtor = async(id) => {
 
 }
 
-//Função para buscar nacionalidades de um ator pelo id
+//Função para listar atores de um filme pelo id
+const getListarAtoresFilme = async(id) => {
+
+    try {
+    
+        let idFilme = id
+        let atorJSON = {}
+
+        if(idFilme == '' || idFilme == undefined || isNaN(idFilme)){
+
+            return message.ERROR_INVALID_ID // 400
+
+        } else {
+
+            let dadosAtor = await atoresDAO.selectAllAtoresByFilme(idFilme)
+
+            const promisses = dadosAtor.map(async (ator) => {
+                let nacionalidades = await getListarNacionalidadesAtor(ator.id)
+                if(nacionalidades.status_code == 200){
+                    ator.nacionalidades = nacionalidades.nacionalidades     
+                } 
+            })
+            
+            await Promise.all(promisses)
+
+            if(dadosAtor){
+
+                if(dadosAtor.length > 0){
+                    
+                    atorJSON.atores = dadosAtor
+                    atorJSON.status_code = 200
+                    return atorJSON
+
+                }else{
+                    return message.ERROR_NOT_FOUND // 404
+                }
+
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB // 500
+            }
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
+//Função para listar nacionalidades de um ator pelo id
 const getListarNacionalidadesAtor = async(id) => {
    
     try {
@@ -274,7 +315,7 @@ const getListarNacionalidadesAtor = async(id) => {
 
         } else {
 
-            let dadosNacionalidades = await nacionalidadesAtoresDAO.selectByIdNacionalidades(idAtor)
+            let dadosNacionalidades = await nacionalidadesAtoresDAO.selectAllNacionalidadesByIdAtor(idAtor)
 
             if(dadosNacionalidades){
 
@@ -305,5 +346,6 @@ module.exports = {
     setAtualizarAtor,
     setExcluirAtor,
     getListarAtores,
+    getListarAtoresFilme,
     getBuscarAtor
 }

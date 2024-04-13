@@ -54,7 +54,7 @@ const deleteNacionalidade = async (id) => {
 }
 
 // Listar todas as nacionalidades existentes na tabela
-const selectAllNacionalidade = async () => {   
+const selectAllNacionalidades = async () => {   
 
     try {
         let sql = 'select id, pais, nome as gentilico, bandeira from tbl_nacionalidade order by id desc'
@@ -96,7 +96,7 @@ module.exports = {
     insertNacionalidade,
     updateNacionalidade,
     deleteNacionalidade,
-    selectAllNacionalidade,
+    selectAllNacionalidades,
     selectByIdNacionalidade,
     selectLastId
 }

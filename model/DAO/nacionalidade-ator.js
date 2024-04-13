@@ -80,7 +80,7 @@ const selectByIdNacionalidadeAtor = async (id) => {
 }
 
 // Buscar as nacionalidades de um ator existente filtrando pelo ID
-const selectByIdNacionalidades = async (id) => {
+const selectAllNacionalidadesByIdAtor = async (id) => {
 
     try {
         let sql = `select tn.nome as gentilico, tn.pais from tbl_nacionalidade_ator as tna inner join tbl_nacionalidade as tn on tna.id_nacionalidade=tn.id where tna.id_ator = ${id}`
@@ -110,7 +110,7 @@ module.exports = {
     updateNacionalidadeAtor,
     deleteNacionalidadeAtor,
     selectAllNacionalidadesAtores,
+    selectAllNacionalidadesByIdAtor,
     selectByIdNacionalidadeAtor,
-    selectByIdNacionalidades,
     selectLastId
 }

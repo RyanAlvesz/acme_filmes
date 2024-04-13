@@ -206,10 +206,50 @@ const getBuscarDiretor = async(id) => {
 
 }
 
+//Função para listar diretores de um filme pelo id
+const getListarDiretoresFilme = async(id) => {
+
+    try {
+    
+        let idFilme = id
+        let diretorJSON = {}
+
+        if(idFilme == '' || idFilme == undefined || isNaN(idFilme)){
+
+            return message.ERROR_INVALID_ID // 400
+
+        } else {
+
+            let dadosDiretor = await diretoresDAO.selectAllDiretoresByFilme(idFilme)
+
+            if(dadosDiretor){
+
+                if(dadosDiretor.length > 0){
+                    
+                    diretorJSON.diretores = dadosDiretor
+                    diretorJSON.status_code = 200
+                    return diretorJSON
+
+                }else{
+                    return message.ERROR_NOT_FOUND // 404
+                }
+
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB // 500
+            }
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
 module.exports = {
     setNovoDiretor,
     setAtualizarDiretor,
     setExcluirDiretor,
     getListarDiretores,
+    getListarDiretoresFilme,
     getBuscarDiretor
 }

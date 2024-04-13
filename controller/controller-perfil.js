@@ -249,10 +249,50 @@ const getBuscarPerfil = async(id) => {
 
 }
 
+//Função para buscar todos os perfis de um usuário pelo id
+const getListarPerfisUsuario = async(id) => {
+
+    try {
+    
+        let idUsuario = id
+        let perfilJSON = {}
+
+        if(idUsuario == '' || idUsuario == undefined || isNaN(idUsuario)){
+
+            return message.ERROR_INVALID_ID // 400
+
+        } else {
+
+            let dadosPerfil = await perfisDAO.selectAllPerfisByIdUsuario(idUsuario)
+
+            if(dadosPerfil){
+
+                if(dadosPerfil.length > 0){
+                    
+                    perfilJSON.perfis = dadosPerfil
+                    perfilJSON.status_code = 200
+                    return perfilJSON
+
+                }else{
+                    return message.ERROR_NOT_FOUND // 404
+                }
+
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB // 500
+            }
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
 module.exports = {
     setNovoPerfil,
     setAtualizarPerfil,
     setExcluirPerfil,
     getListarPerfis,
-    getBuscarPerfil
+    getBuscarPerfil,
+    getListarPerfisUsuario
 }
