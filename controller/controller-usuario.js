@@ -154,7 +154,7 @@ const getListarUsuarios = async() => {
             
             if(dadosUsuario.length > 0) {
                 
-                usuarioJSON.usuario = dadosUsuario
+                usuarioJSON.usuarios = dadosUsuario
                 usuarioJSON.quantidade = dadosUsuario.length
                 usuarioJSON.status_code = 200
                 return usuarioJSON

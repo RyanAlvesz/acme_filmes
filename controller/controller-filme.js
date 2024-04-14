@@ -87,7 +87,6 @@ const setNovoFilme = async(dadosFilme, contentType) => {
                     return message.ERROR_INTERNAL_SERVER_DB // 500
 
                 }
-        
                 
             }
     
