@@ -698,7 +698,7 @@ const getListarFilmesGenero = async() => {
             if(dadosGeneros.length > 0){
                 
                 // Montando o JSON para retornar os filmes
-                filmeJSON.filmes = dadosGeneros
+                filmeJSON.generos = dadosGeneros
                 filmeJSON.status_code = 200
                 // Retorna o JSON montado
                 return filmeJSON
