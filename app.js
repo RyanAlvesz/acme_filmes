@@ -190,7 +190,6 @@ app.get('/v2/acme_filmes/filme/:id', cors(), async (request, response, next) => 
 
 })
 
-
 // EndPoint: Listar filmes filtrando pelo id do ator
 app.get('/v2/acme_filmes/filmes/ator/:id', cors(), async (request, response, next) => {
 
@@ -204,16 +203,12 @@ app.get('/v2/acme_filmes/filmes/ator/:id', cors(), async (request, response, nex
 
 })
 
-// EndPoint: Listar filmes filtrando pelo id do gênero
-app.get('/v2/acme_filmes/filmes/genero/:id', cors(), async (request, response, next) => {
+// EndPoint: Listar filmes organizando por gênero
+app.get('/v2/acme_filmes/filmes/generos/', cors(), async (request, response, next) => {
 
-    // Recebe o id da requisição
-    let idGenero = request.params.id
-    
-    let dadosFilme = await controllerFilmes.getListarFilmesGenero(idGenero)
-    
-    response.status(dadosFilme.status_code);
-    response.json(dadosFilme)
+    let dadosFilmes = await controllerFilmes.getListarFilmesGenero()
+    response.status(dadosFilmes.status_code)
+    response.json(dadosFilmes)
 
 })
 

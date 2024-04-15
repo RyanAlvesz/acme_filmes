@@ -528,6 +528,7 @@ const getBuscarFilme = async(id) => {
 
                     // Montando o JSON para retornar o filme
                     filmeJSON.filme = dadosFilme
+                    filmeJSON.quantidade = dadosFilme.length
                     filmeJSON.status_code = 200
                     // Retorna o JSON montado
                     return filmeJSON
@@ -616,9 +617,28 @@ const getListarFilmesAtor = async(id) => {
 
                 // Validação para verificar se existem dados de retorno
                 if(dadosFilme.length > 0){
+
+                    // Adicionando os gêneros, diretores e atores dos filmes no JSON de cada filme
+                    const promisse = dadosFilme.map(async (filme) => {
+                        let generos = await controllerGeneros.getListarGenerosFilme(filme.id)
+                        if(generos.status_code == 200){
+                            filme.generos = generos.generos     
+                        }
+                        let diretores = await controllerDiretores.getListarDiretoresFilme(filme.id)
+                        if(diretores.status_code == 200){
+                            filme.diretores = diretores.diretores     
+                        }
+                        let atores = await controllerAtores.getListarAtoresFilme(filme.id)
+                        if(atores.status_code == 200){
+                            filme.atores = atores.atores     
+                        } 
+                    })
+
+                    await Promise.all(promisse)
                     
                     // Montando o JSON para retornar os filmes
                     filmeJSON.filmes = dadosFilme
+                    filmeJSON.quantidade = dadosFilme.length
                     filmeJSON.status_code = 200
                     // Retorna o JSON montado
                     return filmeJSON
@@ -643,49 +663,58 @@ const getListarFilmesAtor = async(id) => {
 
 }
 
-//Função para listar filmes de um gênero pelo id
-const getListarFilmesGenero = async(id) => {
+//Função para listar filmes de um gênero
+const getListarFilmesGenero = async() => {
 
     try {
-        
-        //Recebe o id do gênero
-        let idGenero = id
+    
         let filmeJSON = {}
+        let dadosGeneros = []
 
-        // Validação para ID vazio, indefinido
-        if(idGenero == '' || idGenero == undefined || isNaN(idGenero)){
+        let generosJSON = await controllerGeneros.getListarGeneros()
 
-            return message.ERROR_INVALID_ID // 400
+        // Validação para verificar se os dados no servidor foram processados
+        if(generosJSON){
 
-        } else {
-
-            let dadosFilme = await filmesDAO.selectAllFilmesByGenero(idGenero)
-
-            // Validação para verificar se os dados no servidor foram processados
-            if(dadosFilme){
-
-                // Validação para verificar se existem dados de retorno
-                if(dadosFilme.length > 0){
-                    
-                    // Montando o JSON para retornar os filmes
-                    filmeJSON.filmes = dadosFilme
-                    filmeJSON.status_code = 200
-                    // Retorna o JSON montado
-                    return filmeJSON
-
-                }else{
-
-                    return message.ERROR_NOT_FOUND // 404
-
+            const promisse = generosJSON.generos.map(async (genero) => {
+                
+                let filmesARRAY = await filmesDAO.selectAllFilmesByGenero(genero.id)
+                
+                if (filmesARRAY){
+                    let filmesGenero = {
+                        genero: genero.nome,
+                        id_genero: genero.id,
+                        filmes: filmesARRAY,
+                        quantidade_filmes: filmesARRAY.length
+                    }
+                    dadosGeneros.push(filmesGenero)
                 }
+    
+            })
+            
+            await Promise.all(promisse)
+            
+            // Validação para verificar se existem dados de retorno
+            if(dadosGeneros.length > 0){
+                
+                // Montando o JSON para retornar os filmes
+                filmeJSON.filmes = dadosGeneros
+                filmeJSON.status_code = 200
+                // Retorna o JSON montado
+                return filmeJSON
 
-            } else {
+            }else{
 
-                return message.ERROR_INTERNAL_SERVER_DB // 500
+                return message.ERROR_NOT_FOUND // 404
 
             }
 
+        } else {
+
+            return message.ERROR_INTERNAL_SERVER_DB // 500
+
         }
+        
 
     } catch (error) {
         message.ERROR_INTERNAL_SERVER // 500
