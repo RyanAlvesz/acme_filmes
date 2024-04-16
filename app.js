@@ -55,8 +55,8 @@ const bodyParserJson = bodyParser.json()
 app.use((request, response, next) => {
 
     response.header('Access-Control-Allow-Origin', '*')
-    response.header('Access-Control-Allow-Methods', 'GET, POST', 'UPDATE', 'DELETE')
-    app.use(cors)
+    response.header('Access-Control-Allow-Methods', '*')
+    app.use(cors())
     next()
 
 })
