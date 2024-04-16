@@ -8,6 +8,8 @@
 const usuariosDAO = require('../model/DAO/usuario.js')
 const message = require('../modulo/config.js')
 
+const controllerPerfis = require('./controller-perfil.js')
+
 //Função para inserir um novo usuário no Banco de Dados
 const setNovoUsuario = async(dadosUsuario, contentType) => {
 
@@ -212,10 +214,66 @@ const getBuscarUsuario = async(id) => {
 
 }
 
+//Função para validar um usuário
+const getValidarUsuario = async(email, senha) => {
+
+    try {
+
+        if(String(contentType).toLowerCase() == 'application/json'){
+    
+            let emailUsuario = email
+            let senhaUsuario = senha
+            let usuarioJSON = {}
+
+            if(emailUsuario == '' || emailUsuario == undefined || senhaUsuario == '' || senhaUsuario == undefined){
+
+                return message.ERROR_REQUIRED_FIELDS // 400
+
+            } else {
+
+                let dadosUsuario = await usuariosDAO.selectValidacaoUsuario(emailUsuario, senhaUsuario)
+
+                if(dadosUsuario){
+
+                    if(dadosUsuario.length > 0){         
+                        
+                        let usuario = dadosUsuario
+                        let perfil = await controllerPerfis.getListarPerfisUsuario(usuario[0].id)
+
+                        if(perfil.status_code == 200){
+                            dadosUsuario[0].perfis = perfil.perfis
+                        }
+
+                        usuarioJSON.status = message.VALIDATED_ITEM.status       
+                        usuarioJSON.status_code = message.VALIDATED_ITEM.status_code       
+                        usuarioJSON.message = message.VALIDATED_ITEM.message       
+                        usuarioJSON.usuario = usuario
+                
+                        return usuarioJSON
+                    } else {
+                        return message.ERROR_NOT_FOUND // 404
+                    }
+
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB // 500
+                }
+            }
+            
+        }else{
+            return message.ERROR_CONTENT_TYPE // 415
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
 module.exports = {
     setNovoUsuario,
     setAtualizarUsuario,
     setExcluirUsuario,
     getListarUsuarios,
-    getBuscarUsuario
+    getBuscarUsuario,
+    getValidarUsuario
 }

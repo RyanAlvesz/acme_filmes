@@ -801,6 +801,17 @@ app.get('/v2/acme_filmes/usuario/:id', cors(), async (request, response, next) =
 
 })
 
+// EndPoint: Validar os dados do usuário
+app.post('/v2/acme_filmes/validacao/usuario', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let dadosUsuario = await controllerUsuarios.getValidarUsuario(dadosBody.email, dadosBody.senha, contentType)
+    response.status(dadosUsuario.status_code);
+    response.json(dadosUsuario)
+
+})
+
 // EndPoint: Inserir novos usuários no Banco de Dados
 app.post('/v2/acme_filmes/usuario/', cors(), bodyParserJson, async (request, response, next) => {
 
@@ -1093,6 +1104,17 @@ app.get('/v2/acme_filmes/funcionario/:id', cors(), async (request, response, nex
 
     let idFuncionario = request.params.id
     let dadosFuncionario = await controllerFuncionarios.getBuscarFuncionario(idFuncionario)
+    response.status(dadosFuncionario.status_code);
+    response.json(dadosFuncionario)
+
+})
+
+// EndPoint: Validar os dados do funcionário
+app.post('/v2/acme_filmes/validacao/funcionario', cors(), bodyParserJson, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let dadosFuncionario = await controllerFuncionarios.getValidarFuncionario(dadosBody.email, dadosBody.senha, contentType)
     response.status(dadosFuncionario.status_code);
     response.json(dadosFuncionario)
 

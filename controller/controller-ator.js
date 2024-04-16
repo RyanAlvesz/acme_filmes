@@ -177,19 +177,19 @@ const getListarAtores = async() => {
         let atorJSON = {}
         let dadosAtor = await atoresDAO.selectAllAtores()
 
-        const promisse = dadosAtor.map(async (ator) => {
-            let nacionalidades = await getListarNacionalidadesAtor(ator.id)
-            if(nacionalidades.status_code == 200){
-                ator.nacionalidades = nacionalidades.nacionalidades     
-            } 
-        })
-        
-        await Promise.all(promisse)
-
         if(dadosAtor){
             
             if(dadosAtor.length > 0) {
                 
+                const promisse = dadosAtor.map(async (ator) => {
+                    let nacionalidades = await getListarNacionalidadesAtor(ator.id)
+                    if(nacionalidades.status_code == 200){
+                        ator.nacionalidades = nacionalidades.nacionalidades     
+                    } 
+                })
+                
+                await Promise.all(promisse)
+
                 atorJSON.atores = dadosAtor
                 atorJSON.quantidade = dadosAtor.length
                 atorJSON.status_code = 200
@@ -224,15 +224,16 @@ const getBuscarAtor = async(id) => {
         } else {
 
             let dadosAtor = await atoresDAO.selectByIdAtor(idAtor)
-            let nacionalidades = await getListarNacionalidadesAtor(idAtor)
-
-            if(nacionalidades.status_code == 200){
-                dadosAtor[0].nacionalidades = nacionalidades.nacionalidades
-            }
 
             if(dadosAtor){
 
                 if(dadosAtor.length > 0){
+
+                    let nacionalidades = await getListarNacionalidadesAtor(idAtor)
+
+                    if(nacionalidades.status_code == 200){
+                        dadosAtor[0].nacionalidades = nacionalidades.nacionalidades
+                    }
                     
                     atorJSON.ator = dadosAtor
                     atorJSON.status_code = 200
@@ -266,22 +267,22 @@ const getListarAtoresFilme = async(id) => {
             return message.ERROR_INVALID_ID // 400
 
         } else {
-
-            let dadosAtor = await atoresDAO.selectAllAtoresByFilme(idFilme)
-
-            const promisses = dadosAtor.map(async (ator) => {
-                let nacionalidades = await getListarNacionalidadesAtor(ator.id)
-                if(nacionalidades.status_code == 200){
-                    ator.nacionalidades = nacionalidades.nacionalidades     
-                } 
-            })
             
-            await Promise.all(promisses)
+            let dadosAtor = await atoresDAO.selectAllAtoresByFilme(idFilme)
 
             if(dadosAtor){
 
                 if(dadosAtor.length > 0){
                     
+                    const promisses = dadosAtor.map(async (ator) => {
+                        let nacionalidades = await getListarNacionalidadesAtor(ator.id)
+                        if(nacionalidades.status_code == 200){
+                            ator.nacionalidades = nacionalidades.nacionalidades     
+                        } 
+                    })
+                    
+                    await Promise.all(promisses)
+
                     atorJSON.atores = dadosAtor
                     atorJSON.status_code = 200
                     return atorJSON

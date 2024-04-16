@@ -211,10 +211,61 @@ const getBuscarFuncionario = async(id) => {
 
 }
 
+//Função para validar um funcionário
+const getValidarFuncionario = async(email, senha, contentType) => {
+
+    try {
+
+        if(String(contentType).toLowerCase() == 'application/json'){
+    
+            let emailFuncionario = email
+            let senhaFuncionario = senha
+            let funcionarioJSON = {}
+
+            if(emailFuncionario == '' || emailFuncionario == undefined || senhaFuncionario == '' || senhaFuncionario == undefined){
+
+                return message.ERROR_REQUIRED_FIELDS // 400
+
+            } else {
+
+                let dadosFuncionario = await funcionariosDAO.selectValidacaoFuncionario(emailFuncionario, senhaFuncionario)
+
+                if(dadosFuncionario){
+
+                    if(dadosFuncionario.length > 0){         
+                        
+                        let funcionario = dadosFuncionario
+
+                        funcionarioJSON.status = message.VALIDATED_ITEM.status       
+                        funcionarioJSON.status_code = message.VALIDATED_ITEM.status_code       
+                        funcionarioJSON.message = message.VALIDATED_ITEM.message       
+                        funcionarioJSON.funcionario = funcionario
+                
+                        return funcionarioJSON
+                    } else {
+                        return message.ERROR_NOT_FOUND // 404
+                    }
+
+                } else {
+                    return message.ERROR_INTERNAL_SERVER_DB // 500
+                }
+            }
+
+        }else{
+            return message.ERROR_CONTENT_TYPE // 415
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
 module.exports = {
     setNovoFuncionario,
     setAtualizarFuncionario,
     setExcluirFuncionario,
     getListarFuncionarios,
-    getBuscarFuncionario
+    getBuscarFuncionario,
+    getValidarFuncionario
 }

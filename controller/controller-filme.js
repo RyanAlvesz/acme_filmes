@@ -367,7 +367,7 @@ const getListarFilmes = async() => {
         
         // Verifica se existem dados retornados
         if(dadosFilmes){
-    
+            
             if(dadosFilmes.length > 0) {
                 
                 // Adicionando os gêneros, diretores e atores dos filmes no JSON de cada filme
@@ -383,7 +383,7 @@ const getListarFilmes = async() => {
                     let atores = await controllerAtores.getListarAtoresFilme(filme.id)
                     if(atores.status_code == 200){
                         filme.atores = atores.atores     
-                    } 
+                    }
                 })
                 
                 await Promise.all(promisse)
@@ -577,7 +577,7 @@ const getListarFilmeDestaque = async() => {
                 return filmeJSON
 
             }else{
-                console.log()
+
                 return message.ERROR_NOT_FOUND // 404
 
             }
@@ -676,27 +676,27 @@ const getListarFilmesGenero = async() => {
         // Validação para verificar se os dados no servidor foram processados
         if(generosJSON){
 
-            const promisse = generosJSON.generos.map(async (genero) => {
-                
-                let filmesARRAY = await filmesDAO.selectAllFilmesByGenero(genero.id)
-                
-                if (filmesARRAY){
-                    let filmesGenero = {
-                        genero: genero.nome,
-                        id_genero: genero.id,
-                        filmes: filmesARRAY,
-                        quantidade_filmes: filmesARRAY.length
-                    }
-                    dadosGeneros.push(filmesGenero)
-                }
-    
-            })
-            
-            await Promise.all(promisse)
-            
             // Validação para verificar se existem dados de retorno
-            if(dadosGeneros.length > 0){
+            if(generosJSON.generos.length > 0){
                 
+                const promisse = generosJSON.generos.map(async (genero) => {
+                
+                    let filmesARRAY = await filmesDAO.selectAllFilmesByGenero(genero.id)
+                    
+                    if (filmesARRAY){
+                        let filmesGenero = {
+                            genero: genero.nome,
+                            id_genero: genero.id,
+                            filmes: filmesARRAY,
+                            quantidade_filmes: filmesARRAY.length
+                        }
+                        dadosGeneros.push(filmesGenero)
+                    }
+        
+                })
+                
+                await Promise.all(promisse)
+
                 // Montando o JSON para retornar os filmes
                 filmeJSON.generos = dadosGeneros
                 filmeJSON.status_code = 200

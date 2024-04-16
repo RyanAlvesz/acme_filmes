@@ -92,7 +92,7 @@ const setAtualizarPerfil = async(dadosPerfil, contentType, idPerfil) => {
             let fotoPerfil = await controllerFotosPerfil.getBuscarFotoPerfil(dadosPerfil.id_foto_perfil)
 
             if( 
-                idPerfil == ''         || idPerfil == undefined          ||
+                idPerfil == ''                   || idPerfil == undefined                   ||
                 dadosPerfil.apelido == ''        || dadosPerfil.apelido == undefined        || dadosPerfil.apelido.length > 80        ||
                 dadosPerfil.id_usuario == ''     || dadosPerfil.id_usuario == undefined     || 
                 dadosPerfil.id_foto_perfil == '' || dadosPerfil.id_foto_perfil == undefined || 

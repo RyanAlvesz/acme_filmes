@@ -123,6 +123,7 @@ create table tbl_usuario (
     senha varchar(50) not null,
     
 	unique index(id),
+    unique key(email),
     unique key (id)
 );
 
@@ -175,6 +176,7 @@ create table tbl_funcionario (
     senha varchar(50) not null,
     
 	unique index(id),
+	unique key(email),
     unique key (id)
 );
 
@@ -360,7 +362,7 @@ insert into tbl_usuario (
 				 ) values (
 					'Gabriela Fernandes Calvacanti',
                     'gabriela@email.com',
-                    'tuquinhoAlmoços321'
+                    md5('1234')
                  );
 
 insert into tbl_categoria_foto_perfil (
@@ -407,44 +409,9 @@ insert into tbl_funcionario (
 				 ) values (
 					'Ryan Alves de Carvalho',
                     'ryan@email.com',
-                    '1234'
+                    md5('1234')
                  );
-                 
-update tbl_filme set 
-nome = 'Kill Bill - Volume 1',
-sinopse = 'A Noiva (Uma Thurman) é uma perigosa assassina que trabalhava em um grupo, liderado por Bill (David Carradine), composto principalmente por mulheres. Grávida, ela decide escapar dessa vida de violência e decide se casar, mas no dia da cerimônia seus companheiros de trabalho se voltam contra ela, quase a matando. Após cinco anos em coma, ela desperta sem um bebê e com um único desejo: vingança. A Noiva decide procurar, e matar, as cinco pessoas que destruiram o seu futuro, começando pelas perigosas assassinas Vernita Green (Vivica A. Fox) e O-Ren Ishii (Lucy Liu).',
-duracao = '01:52:00',
-data_lancamento = '2004-04-23',
-data_relancamento = null,
-foto_capa = 'https://br.web.img3.acsta.net/c_310_420/medias/nmedia/18/89/48/24/20122126.jpg',
-valor_unitario = null
-where id = 2;
-
-select cast(last_insert_id() as DECIMAL) as id from tbl_filme limit 1;
-select id, nome, sinopse, time_format(duracao, '%H:%i:%S') as duracao, date_format(data_lancamento, '%Y-%m-%d') as data_lancamento, date_format(data_relancamento, '%Y-%m-%d') as data_relancamento, foto_capa, valor_unitario from tbl_filme order by id desc;
-select id, nome, foto, biografia, date_format(data_nascimento, '%d-%m-%Y') as data_nascimento, date_format(data_falecimento, '%Y-%m-%d') as data_falecimento from tbl_ator order by id desc;
-
-select ta.nome, tf.nome
-from tbl_filme as tf 
-inner join tbl_classificacao as tc 
-on tf.id_classificacao=tc.id 
-inner join tbl_filme_ator as tfa
-on tf.id=tfa.id_ator
-inner join tbl_ator as ta
-on tfa.id_ator=ta.id
-where tfa.id_ator = 3;
-
-select * from tbl_filme_ator;
-
-select MIN(id) as id from tbl_filme;
-select id from tbl_filme where destaque = true;
-update tbl_filme set destaque = false where id = 1;
-select id, destaque from tbl_filme;
-
-
-
-
-
+                                  
 # Procedures
 # Permite criar uma procedure
 ### Na passagem de parametros existem 3 tipos (IN, OUT, INOUT)

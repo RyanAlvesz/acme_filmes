@@ -12,7 +12,7 @@ const prisma = new PrismaClient()
 const insertFuncionario = async (dadosFuncionario) => {
 
     try {
-        let sql = `insert into tbl_funcionario (nome,email,senha) values ('${dadosFuncionario.nome}', '${dadosFuncionario.email}', '${dadosFuncionario.senha}')`
+        let sql = `insert into tbl_funcionario (nome,email,senha) values ('${dadosFuncionario.nome}', '${dadosFuncionario.email}', md5('${dadosFuncionario.senha}'))`
         let resultStatus = await prisma.$executeRawUnsafe(sql)
         if(resultStatus)
             return true
@@ -79,6 +79,19 @@ const selectByIdFuncionario = async (id) => {
 
 }
 
+// Validação de funcionário 
+const selectValidacaoFuncionario = async (email, senha) => {
+
+    try {
+        let sql = `select tf.id, tf.nome, tf.email from tbl_funcionario as tf where email = '${email}' and senha = md5('${senha}')`
+        let rsFuncionario = await prisma.$queryRawUnsafe(sql)
+        return rsFuncionario        
+    } catch (error) {
+        return false
+    }
+
+}
+
 // Buscar o id do último item da tabela
 const selectLastId = async () => {
    
@@ -98,5 +111,6 @@ module.exports = {
     deleteFuncionario,
     selectAllFuncionarios,
     selectByIdFuncionario,
+    selectValidacaoFuncionario,
     selectLastId
 }

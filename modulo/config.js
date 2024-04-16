@@ -67,6 +67,12 @@ const CREATED_ITEM = {
     message: 'Registro criado com sucesso'
 }
 
+const VALIDATED_ITEM = {
+    status: true,
+    status_code: 200,
+    message: 'Registro encontrado com sucesso'
+}
+
 
 module.exports = {
     ERROR_INVALID_ID,
@@ -77,5 +83,6 @@ module.exports = {
     ERROR_CONTENT_TYPE,
     DELETED_ITEM,
     UPDATED_ITEM,
-    CREATED_ITEM
+    CREATED_ITEM,
+    VALIDATED_ITEM
 }
