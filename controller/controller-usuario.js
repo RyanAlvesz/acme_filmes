@@ -215,8 +215,8 @@ const getBuscarUsuario = async(id) => {
 }
 
 //Função para validar um usuário
-const getValidarUsuario = async(email, senha) => {
-
+const getValidarUsuario = async(email, senha, contentType) => {
+    
     try {
 
         if(String(contentType).toLowerCase() == 'application/json'){
@@ -236,7 +236,7 @@ const getValidarUsuario = async(email, senha) => {
                 if(dadosUsuario){
 
                     if(dadosUsuario.length > 0){         
-                        
+
                         let usuario = dadosUsuario
                         let perfil = await controllerPerfis.getListarPerfisUsuario(usuario[0].id)
 
