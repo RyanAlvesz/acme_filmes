@@ -8,8 +8,6 @@
 const usuariosDAO = require('../model/DAO/usuario.js')
 const message = require('../modulo/config.js')
 
-const controllerPerfis = require('./controller-perfil.js')
-
 //Função para inserir um novo usuário no Banco de Dados
 const setNovoUsuario = async(dadosUsuario, contentType) => {
 
@@ -238,11 +236,6 @@ const getValidarUsuario = async(email, senha, contentType) => {
                     if(dadosUsuario.length > 0){         
 
                         let usuario = dadosUsuario
-                        let perfil = await controllerPerfis.getListarPerfisUsuario(usuario[0].id)
-
-                        if(perfil.status_code == 200){
-                            dadosUsuario[0].perfis = perfil.perfis
-                        }
 
                         usuarioJSON.status = message.VALIDATED_ITEM.status       
                         usuarioJSON.status_code = message.VALIDATED_ITEM.status_code       
