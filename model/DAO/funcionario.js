@@ -28,7 +28,7 @@ const insertFuncionario = async (dadosFuncionario) => {
 const updateFuncionario = async (dadosFuncionario, idFuncionario) => {
 
     try {
-        let sql = `update tbl_funcionario set nome = '${dadosFuncionario.nome}', email = '${dadosFuncionario.email}', senha = '${dadosFuncionario.senha}' where id = ${idFuncionario}`   
+        let sql = `update tbl_funcionario set nome = '${dadosFuncionario.nome}', email = '${dadosFuncionario.email}', senha = md5('${dadosFuncionario.senha}') where id = ${idFuncionario}`   
         let resultStatus = await prisma.$executeRawUnsafe(sql)
         if(resultStatus)
             return true
