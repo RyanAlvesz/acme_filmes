@@ -482,7 +482,7 @@ create trigger tgr_delete_foto_perfil
 	before delete on tbl_foto_perfil
 		for each row
 			begin
-				update tbl_perfil set id_foto_perfil = 1 where id_foto_perfil = old.id;
+				update tbl_perfil set id_foto_perfil = 1 where id_foto_perfil = MIN(old.id);
 			end $
 
 
