@@ -931,6 +931,15 @@ app.get('/v2/acme_filmes/foto_perfil/categoria/:id', cors(), async (request, res
 
 })
 
+// EndPoint: Listar as fotos de perfil de todas as categoria
+app.get('/v2/acme_filmes/fotos_perfil/categorias/', cors(), async (request, response, next) => {
+
+    let dadosFotoPerfil = await controllerFotosPerfil.getListarFotosPerfilCategorias()
+    response.status(dadosFotoPerfil.status_code);
+    response.json(dadosFotoPerfil)
+
+})
+
 // EndPoint: Inserir novas fotos de perfil no Banco de Dados
 app.post('/v2/acme_filmes/foto_perfil/', cors(), bodyParserJson, async (request, response, next) => {
 

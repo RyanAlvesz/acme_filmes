@@ -259,11 +259,71 @@ const getListarFotosPerfilCategoria = async (id) => {
 
 }
 
+//Função para listar fotos de perfil de uma categoria
+const getListarFotosPerfilCategorias = async() => {
+
+    try {
+    
+        let fotoPerfilJSON = {}
+        let dadosCategorias = []
+
+        let categoriasJSON = await controllerCategoriasFotoPerfil.getListarCategoriasFotoPerfil()
+
+        // Validação para verificar se os dados no servidor foram processados
+        if(categoriasJSON){
+
+            // Validação para verificar se existem dados de retorno
+            if(categoriasJSON.categorias.length > 0){
+                
+                const promisse = categoriasJSON.categorias.map(async (categoria) => {
+                
+                    let fotosPerfilARRAY = await fotosPerfilDAO.selectAllFotosPerfilByCategoria(categoria.id)
+                    
+                    if (fotosPerfilARRAY){
+                        let fotosCategoria = {
+                            categoria: categoria.nome,
+                            id_categoria: categoria.id,
+                            fotos: fotosPerfilARRAY,
+                            quantidade_fotos: fotosPerfilARRAY.length
+                        }
+                        dadosCategorias.push(fotosCategoria)
+                    }
+        
+                })
+                
+                await Promise.all(promisse)
+
+                // Montando o JSON para retornar as fotos
+                fotoPerfilJSON.fotos_perfil = dadosCategorias
+                fotoPerfilJSON.status_code = 200
+                // Retorna o JSON montado
+                return fotoPerfilJSON
+
+            }else{
+
+                return message.ERROR_NOT_FOUND // 404
+
+            }
+
+        } else {
+
+            return message.ERROR_INTERNAL_SERVER_DB // 500
+
+        }
+        
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
 module.exports = {
     setNovaFotoPerfil,
     setAtualizarFotoPerfil,
     setExcluirFotoPerfil,
     getListarFotosPerfil,
     getListarFotosPerfilCategoria,
-    getBuscarFotoPerfil
+    getBuscarFotoPerfil,
+    getListarFotosPerfilCategorias
 }
