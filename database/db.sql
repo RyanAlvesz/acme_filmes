@@ -509,11 +509,18 @@ create trigger tgr_update_add_destaque
 
 DELIMITER ;
 
-drop trigger tgr_update_add_destaque;
-select * from tbl_filme;
-update tbl_filme set destaque = true where id = 8;
+DELIMITER $$
+create procedure procUpdateFilmeDestaque (IN idFilme int)
+BEGIN
+	update tbl_filme set destaque = false;
+	update tbl_filme set destaque = true where id = idFilme;
+END $$
+DELIMITER ;
 
-show triggers;
+
+
+# Parte de estudo 
+
 
 # Procedures
 # Permite criar uma procedure
@@ -534,15 +541,6 @@ BEGIN
 	end if;
 END $$
 
-DELIMITER $$
-create procedure procUpdateFilmeDestaque (IN idFilme int)
-BEGIN
-	update tbl_filme set destaque = false;
-	update tbl_filme set destaque = true where id = idFilme;
-END $$
-
-DELIMITER ;
-
 call procUpdateFilmeDestaque(8);
 
 # Lista as procedures existentes no Banco de Dados
@@ -553,9 +551,7 @@ call procListaFilme(0);
 
 # Remove a procedure do Banco de Dados
 drop procedure procListaFilme;
-drop procedure procUpdateFilmeDestaque;
-
-create view viewListaFilme as select * from procListaFilme(0);
+drop procedure procUpdateFilmeDestaque
 
 drop view viewListaFilme;
 
