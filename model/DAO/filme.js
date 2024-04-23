@@ -128,7 +128,7 @@ const selectAllFilmes = async () => {
     try {
 
         // Script sql para listar todos os registros
-        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i') as duracao, date_format(tf.data_lancamento, '%Y-%m-%d') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as classificacao, tc.classificacao_indicativa from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id order by tf.id desc`
+        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i') as duracao, date_format(tf.data_lancamento, '%Y-%m-%d') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as sigla_classificacao, tc.descricao as descricacao_classificacao, tc.classificacao_indicativa, tc.icone as classificacao_icone from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id order by tf.id desc`
         
         // $queryRawUnsafe(sql) -- Encaminha apenas a variável
         // $queryRaw('select * from table tbl_filmes') -- Encaminha o script
@@ -153,7 +153,7 @@ const selectByIdFilme = async (id) => {
     try {
 
         // Realiza a busca do Filme pelo ID
-        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i') as duracao, date_format(tf.data_lancamento, '%Y-%m-%d') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as classificacao, tc.classificacao_indicativa from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id where tf.id = ${id}`
+        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i') as duracao, date_format(tf.data_lancamento, '%Y-%m-%d') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as sigla_classificacao, tc.descricao as descricacao_classificacao, tc.classificacao_indicativa, tc.icone as classificacao_icone from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id where tf.id = ${id}`
 
         // Executa no Banco de Dado o script SQL
         let rsFilmes = await prisma.$queryRawUnsafe(sql)
@@ -175,7 +175,7 @@ const selectAllFilmesByAtor = async (id) => {
     try {
 
         // Realiza a busca do Filme pelo ID
-        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i') as duracao, date_format(tf.data_lancamento, '%Y-%m-%d') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as classificacao, tc.classificacao_indicativa from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id inner join tbl_filme_ator as tfa on tf.id=tfa.id_filme where tfa.id_ator = ${id}`
+        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i') as duracao, date_format(tf.data_lancamento, '%Y-%m-%d') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as sigla_classificacao, tc.descricao as descricacao_classificacao, tc.classificacao_indicativa, tc.icone as classificacao_icone from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id inner join tbl_filme_ator as tfa on tf.id=tfa.id_filme where tfa.id_ator = ${id}`
 
         // Executa no Banco de Dado o script SQL
         let rsFilmes = await prisma.$queryRawUnsafe(sql)
@@ -197,7 +197,7 @@ const selectAllFilmesByGenero = async (id) => {
     try {
 
         // Realiza a busca do Filme pelo ID
-        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i') as duracao, date_format(tf.data_lancamento, '%Y-%m-%d') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as classificacao, tc.classificacao_indicativa from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id inner join tbl_filme_genero as tfg on tf.id=tfg.id_filme where tfg.id_genero = ${id}`
+        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i') as duracao, date_format(tf.data_lancamento, '%Y-%m-%d') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as sigla_classificacao, tc.descricao as descricacao_classificacao, tc.classificacao_indicativa, tc.icone as classificacao_icone from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id inner join tbl_filme_genero as tfg on tf.id=tfg.id_filme where tfg.id_genero = ${id}`
 
         // Executa no Banco de Dado o script SQL
         let rsFilmes = await prisma.$queryRawUnsafe(sql)
@@ -219,7 +219,7 @@ const selectAllFilmesFavoritosByPerfil = async (id) => {
     try {
 
         // Realiza a busca do Filme pelo ID
-        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i') as duracao, date_format(tf.data_lancamento, '%Y-%m-%d') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as classificacao, tc.classificacao_indicativa from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id inner join tbl_filme_favorito as tff on tf.id=tff.id_filme where tff.id_perfil = ${id}`
+        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i') as duracao, date_format(tf.data_lancamento, '%Y-%m-%d') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as sigla_classificacao, tc.descricao as descricacao_classificacao, tc.classificacao_indicativa, tc.icone as classificacao_icone from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id inner join tbl_filme_favorito as tff on tf.id=tff.id_filme where tff.id_perfil = ${id}`
 
         // Executa no Banco de Dado o script SQL
         let rsFilmes = await prisma.$queryRawUnsafe(sql)
@@ -241,7 +241,7 @@ const selectByName = async (nome) => {
     try {
 
         // Script sql para listar todos os registros
-        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i') as duracao, date_format(tf.data_lancamento, '%Y-%m-%d') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as classificacao, tc.classificacao_indicativa from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id where tf.nome like '%${nome}%'`
+        let sql = `select tf.id, tf.nome, tf.sinopse, time_format(tf.duracao, '%H:%i') as duracao, date_format(tf.data_lancamento, '%Y-%m-%d') as data_lancamento, tf.foto_capa, tf.foto_banner, tf.destaque, tf.link_trailer, tf.id_classificacao, tc.sigla as sigla_classificacao, tc.descricao as descricacao_classificacao, tc.classificacao_indicativa, tc.icone as classificacao_icone from tbl_filme as tf inner join tbl_classificacao as tc on tf.id_classificacao=tc.id where tf.nome like '%${nome}%'`
 
         // $queryRawUnsafe(sql) -- Encaminha apenas a variável
         // $queryRaw('select * from table tbl_filmes') -- Encaminha o script
