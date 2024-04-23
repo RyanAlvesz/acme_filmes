@@ -343,6 +343,8 @@ const getFilmesNome = async(filtro) => {
 
                 // Adicionando os gêneros, diretores e atores dos filmes no JSON de cada filme
                 const promisse = dadosFilmes.map(async (filme) => {
+                    let classificacao = await controllerClassificacoes.getBuscarClassificacao(filme.id_classificacao)
+                    filme.classificacao = classificacao.classificacao
                     let generos = await controllerGeneros.getListarGenerosFilme(filme.id)
                     if(generos.status_code == 200){
                         filme.generos = generos.generos     
@@ -410,11 +412,14 @@ const getBuscarFilme = async(id) => {
                 // Validação para verificar se existem dados de retorno
                 if(dadosFilme.length > 0){
                     
-                    // Adicionando gêneros, diretores e atores do filme
+                    // Adicionando classificação, gêneros, diretores e atores do filme
+                    let classificacao = await controllerClassificacoes.getBuscarClassificacao(idFilme)
                     let generos = await controllerGeneros.getListarGenerosFilme(idFilme)
                     let diretores = await controllerDiretores.getListarDiretoresFilme(idFilme)
                     let atores = await controllerAtores.getListarAtoresFilme(idFilme)
                     
+                    dadosFilme[0].classificacao = classificacao.classificacao
+
                     if(generos.status_code == 200){
                         dadosFilme[0].generos = generos.generos
                     }
