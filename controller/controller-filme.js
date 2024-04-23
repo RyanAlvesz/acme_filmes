@@ -11,10 +11,8 @@ const filmesDAO = require('../model/DAO/filme.js')
 // Import do arquivo para mensagens
 const message = require('../modulo/config.js')
 
-// Import do controller de classificação para validação
+// Import das controllers
 const controllerClassificacoes = require('./controller-classificacao.js')
-
-// Import dos controllers de ator, gênero e diretor para o select
 const controllerAtores = require('./controller-ator.js')
 const controllerGeneros = require('./controller-genero.js')
 const controllerDiretores = require('./controller-diretor.js')
@@ -47,27 +45,17 @@ const setNovoFilme = async(dadosFilme, contentType) => {
                 
             }else{
 
-                let destaque = await filmesDAO.selectIdDestaque()
-
-                // Verificando se existe um filme em destaque
-                if(destaque.length > 0){
-                
-                    let idDestaque = destaque[0].id
-
-                    // Removendo destaque do filme destacado (mínimo 1 destaque)
-                    if(dadosFilme.destaque == true || dadosFilme.destaque == 1){
-                        await setRemoverDestaque(idDestaque, true)
-                    }
-
-                }
-
                 //Envia os dados para a model inserir no BD
                 let novoFilme = await filmesDAO.insertFilme(dadosFilme)
-                
+
                 //Valida se o BD inseriu corretamente os dados
                 if(novoFilme){
                     
                     let id = await filmesDAO.selectLastId()
+
+                    if(dadosFilme.destaque == true || dadosFilme.destaque == 1){
+                        setAdicionarDestaque(id[0].id)
+                    }
                     
                     // Adiciona a classificação do Filme no JSON para retornar
                     dadosFilme.classificacao = validacaoClassificacao.classificacao[0].sigla
@@ -128,38 +116,17 @@ const setAtualizarFilme = async(dadosFilme, contentType, idFilme) => {
                 return message.ERROR_REQUIRED_FIELDS // 400
                 
             }else{
-
-                let destaque = await filmesDAO.selectIdDestaque()
-
-                // Verificando se existe um filme em destaque
-                if(destaque.length > 0){
-                
-                    let idDestaque = destaque[0].id
-
-                    // Removendo destaque do filme destacado se o filme atualizado tiver destaque 
-                    if(dadosFilme.destaque == true || dadosFilme.destaque == 1){
-                        if(idDestaque != idFilme){
-                            await setRemoverDestaque(idDestaque, true)
-                        }
-                    }
-
-                    // Adicionando destaque no primeiro filme caso seja removido o destaque do filme 
-                    if(dadosFilme.destaque == false || dadosFilme.destaque == 0){
-                        if(idDestaque == idFilme){
-                            let primeiroFilme = await filmesDAO.selectMinId()
-                            let primeiroFilmeId = primeiroFilme[0].id
-                            await setAdicionarDestaque(primeiroFilmeId)    
-                        }                        
-                    }
-
-                }
                 
                 //Envia os dados para a model inserir no BD
                 let filmeAtualizado = await filmesDAO.updateFilme(dadosFilme, idFilme)
 
                 //Valida se o BD inseriu corretamente os dados
                 if(filmeAtualizado){
-                                            
+                                     
+                    if(dadosFilme.destaque == true || dadosFilme.destaque == 1){
+                        setAdicionarDestaque(idFilme)
+                    }
+
                     // Adiciona a classificação do Filme no JSON para retornar
                     dadosFilme.classificacao = validacaoClassificacao.classificacao[0].sigla
                     dadosFilme.classificacao_indicativa = validacaoClassificacao.classificacao[0].classificacao_indicativa
@@ -205,75 +172,11 @@ const setAdicionarDestaque = async(idFilme) => {
             
         }else{
 
-            let destaque = await filmesDAO.selectIdDestaque()
-
-            // Verificando se existe um filme em destaque
-            if(destaque.length > 0){
-
-                let idDestaque = destaque[0].id
-
-                // Removendo destaque do filme destacado
-                if(idDestaque != idFilme){
-                    await setRemoverDestaque(idDestaque, true)
-                }
-            
-            }
-
             //Envia os dados para a model inserir no BD
             let validacaoUpdate = await filmesDAO.updateAdicionarDestaque(idFilme)
 
             //Valida se o BD inseriu corretamente os dados
             if(validacaoUpdate){
-
-                let filme = await getBuscarFilme(idFilme)
-
-                resultDadosFilme.status = message.UPDATED_ITEM.status
-                resultDadosFilme.status_code = message.UPDATED_ITEM.status_code
-                resultDadosFilme.message = message.UPDATED_ITEM.message
-                resultDadosFilme.filme = filme.filme[0]
-                return resultDadosFilme
-
-            }else {
-
-                return message.ERROR_INTERNAL_SERVER_DB // 500
-
-            }
-            
-        }
-
-    } catch (error) {
-        message.ERROR_INTERNAL_SERVER // 500
-    }
-
-}
-
-//Função para adicionar destaque para um filme
-const setRemoverDestaque = async(idFilme, novoFilmeDestaque) => {
-
-    try {
-        
-        let resultDadosFilme = {}
-    
-        //Validação para tratar campos obrigatórios
-        if(idFilme == '' || idFilme == undefined){
-            
-            return message.ERROR_REQUIRED_FIELDS // 400
-            
-        }else{
-            
-            //Envia os dados para a model inserir no BD
-            let validacaoUpdate = await filmesDAO.updateRemoverDestaque(idFilme)
-            
-            //Valida se o BD inseriu corretamente os dados
-            if(validacaoUpdate){
-                
-                if(novoFilmeDestaque == false){
-                    
-                    let primeiroFilme = await filmesDAO.selectMinId()
-                    let primeiroFilmeId = primeiroFilme[0].id
-                    await setAdicionarDestaque(primeiroFilmeId)
-
-                }
 
                 let filme = await getBuscarFilme(idFilme)
 
@@ -320,29 +223,25 @@ const setExcluirFilme = async(id) => {
         } else {
             
             let destaque = await filmesDAO.selectIdDestaque()
-            let dadosFilme = await filmesDAO.deleteFilme(idFilme)
+            
+            if(destaque[0].id != idFilme){
 
-            // Verificando se existe um filme em destaque
-            if(destaque.length > 0){
-                
-                let idDestaque = destaque[0].id
+                let dadosFilme = await filmesDAO.deleteFilme(idFilme)
 
-                if(idDestaque == idFilme){
-                    let primeiroFilme = await filmesDAO.selectMinId()
-                    let primeiroFilmeId = primeiroFilme[0].id
-                    await setAdicionarDestaque(primeiroFilmeId)
+                // Validação para verificar se os dados no servidor foram processados
+                if(dadosFilme){                
+                        
+                    return message.DELETED_ITEM // 200
+    
+                } else {
+    
+                    return message.ERROR_INTERNAL_SERVER_DB // 500
+    
                 }
 
-            }
+            }else{
 
-            // Validação para verificar se os dados no servidor foram processados
-            if(dadosFilme){                
-                    
-                return message.DELETED_ITEM // 200
-
-            } else {
-
-                return message.ERROR_INTERNAL_SERVER_DB // 500
+                return message.ERROR_FEATURED_MOVIE
 
             }
 
@@ -372,6 +271,8 @@ const getListarFilmes = async() => {
                 
                 // Adicionando os gêneros, diretores e atores dos filmes no JSON de cada filme
                 const promisse = dadosFilmes.map(async (filme) => {
+                    let classificacao = await controllerClassificacoes.getBuscarClassificacao(filme.id_classificacao)
+                    filme.classificacao = classificacao.classificacao
                     let generos = await controllerGeneros.getListarGenerosFilme(filme.id)
                     if(generos.status_code == 200){
                         filme.generos = generos.generos     
@@ -777,7 +678,6 @@ module.exports = {
     setAtualizarFilme,
     setExcluirFilme,
     setAdicionarDestaque,
-    setRemoverDestaque,
     getListarFilmes,
     getListarFilmeDestaque,
     getListarFilmesAtor,

@@ -45,6 +45,12 @@ const ERROR_INTERNAL_SERVER = {
     message: 'Ocorrem erros internos no servidor na camada de negócio da API, por favor contate o administrador do sistema'
 }
 
+const ERROR_FEATURED_MOVIE = {
+    status: false,
+    status_code: 428,
+    message: 'Você está tentando deletar um filme em destaque, por favor adicione o destaque a outro filme antes'
+}
+
 /****************************************************************************************************************************************************
 *                                                              Mensagens de Sucesso
 ****************************************************************************************************************************************************/
@@ -73,7 +79,6 @@ const VALIDATED_ITEM = {
     message: 'Registro encontrado com sucesso'
 }
 
-
 module.exports = {
     ERROR_INVALID_ID,
     ERROR_NOT_FOUND,
@@ -81,6 +86,7 @@ module.exports = {
     ERROR_INTERNAL_SERVER_DB,
     ERROR_INTERNAL_SERVER,
     ERROR_CONTENT_TYPE,
+    ERROR_FEATURED_MOVIE,
     DELETED_ITEM,
     UPDATED_ITEM,
     CREATED_ITEM,

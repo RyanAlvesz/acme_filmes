@@ -2,6 +2,9 @@ create schema db_acme_filmes_turma_ab;
 
 use db_acme_filmes_turma_ab;
 
+update tbl_usuario set nome = 'Ryan Alves', email = 'ra546038@gmail.com' where id = 2;
+select * from tbl_classificacao;
+
 -- creates
 
 create table tbl_classificacao (
@@ -482,7 +485,7 @@ create trigger tgr_delete_foto_perfil
 	before delete on tbl_foto_perfil
 		for each row
 			begin
-				update tbl_perfil set id_foto_perfil = 1 where id_foto_perfil = MIN(old.id);
+				update tbl_perfil set id_foto_perfil = 1 where id_foto_perfil = old.id;
 			end $
 
 
@@ -493,11 +496,25 @@ create trigger tgr_delete_categoria_foto_perfil
 			begin
 				delete from tbl_foto_perfil where id_categoria_foto_perfil = old.id;
 			end $
-            
+
+DELIMITER $
+create trigger tgr_update_add_destaque
+	before update on tbl_filme
+		for each row
+			begin
+				if (old.destaque = true or old.destaque = 1) then	
+					update tbl_filme set destaque = false where id > 0;
+                end if;
+			end $
+
+DELIMITER ;
+
+drop trigger tgr_update_add_destaque;
+select * from tbl_filme;
+update tbl_filme set destaque = true where id = 8;
 
 show triggers;
-drop trigger delete_filme;
-              
+
 # Procedures
 # Permite criar uma procedure
 ### Na passagem de parametros existem 3 tipos (IN, OUT, INOUT)
@@ -517,6 +534,17 @@ BEGIN
 	end if;
 END $$
 
+DELIMITER $$
+create procedure procUpdateFilmeDestaque (IN idFilme int)
+BEGIN
+	update tbl_filme set destaque = false;
+	update tbl_filme set destaque = true where id = idFilme;
+END $$
+
+DELIMITER ;
+
+call procUpdateFilmeDestaque(8);
+
 # Lista as procedures existentes no Banco de Dados
 -- show procedure status;
 
@@ -525,6 +553,7 @@ call procListaFilme(0);
 
 # Remove a procedure do Banco de Dados
 drop procedure procListaFilme;
+drop procedure procUpdateFilmeDestaque;
 
 create view viewListaFilme as select * from procListaFilme(0);
 

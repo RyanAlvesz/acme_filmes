@@ -156,7 +156,7 @@ app.get('/v2/acme_filmes/filmes', cors(), async (request, response, next) => {
 })
 
 // EndPoint: Listar os dados do filme filtrando pelo id
-app.get('/v2/acme_filmes/filme/destaque/', cors(), async (request, response, next) => {
+app.get('/v2/acme_filmes/destaque/', cors(), async (request, response, next) => {
     
     let dadosFilme = await controllerFilmes.getListarFilmeDestaque()
 
@@ -286,20 +286,6 @@ app.put('/v2/acme_filmes/filme/add_destaque/:id', cors(), async (request, respon
     response.json(dadosFilme)
 
 })
-
-// EndPoint: Remover destaque no filme por id
-app.put('/v2/acme_filmes/filme/rem_destaque/:id', cors(), async (request, response, next) => {
-
-    // Recebe o id da requisição
-    let idFilme = request.params.id
-    
-    let dadosFilme = await controllerFilmes.setRemoverDestaque(idFilme, false)
-    
-    response.status(dadosFilme.status_code);
-    response.json(dadosFilme)
-
-})
-
 
 
 // #region DIRETORES
