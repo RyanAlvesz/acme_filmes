@@ -72,6 +72,53 @@ const setAtualizarUsuario = async(dadosUsuario, contentType, idUsuario) => {
             if( 
                 idUsuario == ''          || idUsuario == undefined          ||
                 dadosUsuario.nome == ''  || dadosUsuario.nome == undefined  || dadosUsuario.nome.length > 100  ||
+                dadosUsuario.email == '' || dadosUsuario.email == undefined || dadosUsuario.email.length > 100
+            ){
+                
+                return message.ERROR_REQUIRED_FIELDS // 400
+                
+            }else{
+                
+                let usuarioAtualizado = await usuariosDAO.updateUsuario(dadosUsuario, idUsuario)
+                                        
+                dadosUsuario.id = idUsuario
+
+                if(usuarioAtualizado){
+                    resultDadosUsuario.status = message.UPDATED_ITEM.status
+                    resultDadosUsuario.status_code = message.UPDATED_ITEM.status_code
+                    resultDadosUsuario.message = message.UPDATED_ITEM.message
+                    resultDadosUsuario.usuario = dadosUsuario
+                    return resultDadosUsuario
+                }else {
+
+                    return message.ERROR_INTERNAL_SERVER_DB // 500
+
+                }
+                
+            }
+    
+        }else{
+            return message.ERROR_CONTENT_TYPE // 415
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
+//Função para atualizar um usuário existente
+const setAtualizarUsuarioSenha = async(dadosUsuario, contentType, idUsuario) => {
+
+    try {
+        
+        if(String(contentType).toLowerCase() == 'application/json'){
+
+            let resultDadosUsuario = {}
+        
+            if( 
+                idUsuario == ''          || idUsuario == undefined          ||
+                dadosUsuario.nome == ''  || dadosUsuario.nome == undefined  || dadosUsuario.nome.length > 100  ||
                 dadosUsuario.email == '' || dadosUsuario.email == undefined || dadosUsuario.email.length > 100 ||
                 dadosUsuario.senha == '' || dadosUsuario.senha == undefined || dadosUsuario.senha.length > 50 
             ){
@@ -80,7 +127,7 @@ const setAtualizarUsuario = async(dadosUsuario, contentType, idUsuario) => {
                 
             }else{
                 
-                let usuarioAtualizado = await usuariosDAO.updateUsuario(dadosUsuario, idUsuario)
+                let usuarioAtualizado = await usuariosDAO.updateUsuarioSenha(dadosUsuario, idUsuario)
                                         
                 dadosUsuario.id = idUsuario
 
@@ -265,6 +312,7 @@ const getValidarUsuario = async(email, senha, contentType) => {
 module.exports = {
     setNovoUsuario,
     setAtualizarUsuario,
+    setAtualizarUsuarioSenha,
     setExcluirUsuario,
     getListarUsuarios,
     getBuscarUsuario,

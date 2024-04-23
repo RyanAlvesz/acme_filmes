@@ -845,6 +845,18 @@ app.put('/v2/acme_filmes/usuario/:id', cors(), bodyParserJson, async (request, r
 
 })
 
+// EndPoint: Atualizar usuário por id
+app.put('/v2/acme_filmes/senha/usuario/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let idUsuario = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerUsuarios.setAtualizarUsuarioSenha(dadosBody, contentType, idUsuario)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
 // #region CATEGORIA DE FOTO DE PERFIL
 
 // EndPoint: Listar todos as categorias de foto de perfil e suas informações

@@ -28,6 +28,22 @@ const insertUsuario = async (dadosUsuario) => {
 const updateUsuario = async (dadosUsuario, idUsuario) => {
 
     try {
+        let sql = `update tbl_usuario set nome = '${dadosUsuario.nome}', email = '${dadosUsuario.email}' where id = ${idUsuario}`           
+        let resultStatus = await prisma.$executeRawUnsafe(sql)
+        if(resultStatus)
+            return true
+        else
+            return false
+    } catch (error) {
+        return false
+    }
+
+}
+
+// Atualizar um usuário existente filtrando pelo ID
+const updateUsuarioSenha = async (dadosUsuario, idUsuario) => {
+
+    try {
         let sql = `update tbl_usuario set nome = '${dadosUsuario.nome}', email = '${dadosUsuario.email}', senha = md5('${dadosUsuario.senha}') where id = ${idUsuario}`   
         let resultStatus = await prisma.$executeRawUnsafe(sql)
         if(resultStatus)
@@ -108,6 +124,7 @@ const selectLastId = async () => {
 module.exports = {
     insertUsuario,
     updateUsuario,
+    updateUsuarioSenha,
     deleteUsuario,
     selectAllUsuarios,
     selectByIdUsuario,
