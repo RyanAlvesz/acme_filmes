@@ -413,7 +413,7 @@ const getBuscarFilme = async(id) => {
                 if(dadosFilme.length > 0){
                     
                     // Adicionando classificação, gêneros, diretores e atores do filme
-                    let classificacao = await controllerClassificacoes.getBuscarClassificacao(idFilme)
+                    let classificacao = await controllerClassificacoes.getBuscarClassificacao(dadosFilme[0].id_classificacao)
                     let generos = await controllerGeneros.getListarGenerosFilme(idFilme)
                     let diretores = await controllerDiretores.getListarDiretoresFilme(idFilme)
                     let atores = await controllerAtores.getListarAtoresFilme(idFilme)
