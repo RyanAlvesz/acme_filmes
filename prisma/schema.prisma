@@ -106,6 +106,7 @@ model tbl_filme_genero {
 model tbl_foto_perfil {
   id                        Int                       @id @unique(map: "id") @default(autoincrement())
   foto                      String?                   @db.Text
+  nome                      String?                   @db.VarChar(50)
   id_categoria_foto_perfil  Int
   tbl_categoria_foto_perfil tbl_categoria_foto_perfil @relation(fields: [id_categoria_foto_perfil], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tbl_foto_perfil_ibfk_1")
   tbl_perfil                tbl_perfil[]
@@ -116,7 +117,7 @@ model tbl_foto_perfil {
 model tbl_funcionario {
   id    Int    @id @unique(map: "id") @default(autoincrement())
   nome  String @db.VarChar(100)
-  email String @db.VarChar(100)
+  email String @unique(map: "email") @db.VarChar(100)
   senha String @db.VarChar(50)
 }
 
@@ -161,7 +162,7 @@ model tbl_perfil {
 model tbl_usuario {
   id         Int          @id @unique(map: "id") @default(autoincrement())
   nome       String       @db.VarChar(100)
-  email      String       @db.VarChar(100)
+  email      String       @unique(map: "email") @db.VarChar(100)
   senha      String       @db.VarChar(50)
   tbl_perfil tbl_perfil[]
 }
