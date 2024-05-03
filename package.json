@@ -1,4 +1,8 @@
 {
+  "name": "acme_filmes_backend",
+  "scripts": {
+    "start": "node ./app.js"
+  },
   "dependencies": {
     "@prisma/client": "^5.13.0",
     "body-parser": "^1.20.2",
