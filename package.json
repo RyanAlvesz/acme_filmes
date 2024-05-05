@@ -1,7 +1,7 @@
 {
   "name": "acme_filmes_backend",
   "scripts": {
-    "start": "npx prisma db pull && npx prisma generate && node ./app.js"
+    "start": "node ./app.js"
   },
   "dependencies": {
     "@prisma/client": "^5.13.0",
