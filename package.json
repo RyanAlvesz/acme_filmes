@@ -1,7 +1,7 @@
 {
   "name": "acme_filmes_backend",
   "scripts": {
-    "postinstall": "npx prisma db pull && npx prisma generate",
+    "prisma": "npx prisma db pull && npx prisma generate",
     "start": "node ./app.js"
   },
   "dependencies": {
