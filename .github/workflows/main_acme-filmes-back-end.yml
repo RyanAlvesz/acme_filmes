@@ -36,6 +36,9 @@ jobs:
           name: node-app
           path: release.zip
 
+      - name: Execute Prisma commands
+        run: npm run prisma
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
