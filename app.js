@@ -1160,5 +1160,6 @@ app.put('/v2/acme_filmes/funcionario/:id', cors(), bodyParserJson, async (reques
 
 })
 
+const port = process.env.PORT || 8080
 
-app.listen(8080, () => {console.log('API funcionando na porta 8080')})
+app.listen(port, () => {console.log('API funcionando na porta ' + port)})
