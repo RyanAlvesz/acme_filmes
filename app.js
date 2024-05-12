@@ -1160,6 +1160,18 @@ app.put('/v2/acme_filmes/funcionario/:id', cors(), bodyParserJson, async (reques
 
 })
 
+// EndPoint: Atualizar funcionário por id
+app.put('/v2/acme_filmes/senha/funcionario/:id', cors(), bodyParserJson, async (request, response, next) => {
+
+    let idFuncionario = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+    let resultDados = await controllerFuncionarios.setAtualizarFuncionarioSenha(dadosBody, contentType, idFuncionario)
+    response.status(resultDados.status_code);
+    response.json(resultDados)
+
+})
+
 const port = process.env.PORT || 8080
 
 app.listen(port, () => {console.log('API funcionando na porta ' + port)})

@@ -72,6 +72,53 @@ const setAtualizarFuncionario = async(dadosFuncionario, contentType, idFuncionar
             if( 
                 idFuncionario == ''          || idFuncionario == undefined          ||
                 dadosFuncionario.nome == ''  || dadosFuncionario.nome == undefined  || dadosFuncionario.nome.length > 100  ||
+                dadosFuncionario.email == '' || dadosFuncionario.email == undefined || dadosFuncionario.email.length > 100 
+            ){
+                
+                return message.ERROR_REQUIRED_FIELDS // 400
+                
+            }else{
+                
+                let funcionarioAtualizado = await funcionariosDAO.updateFuncionario(dadosFuncionario, idFuncionario)
+                                        
+                dadosFuncionario.id = idFuncionario
+
+                if(funcionarioAtualizado){
+                    resultDadosFuncionario.status = message.UPDATED_ITEM.status
+                    resultDadosFuncionario.status_code = message.UPDATED_ITEM.status_code
+                    resultDadosFuncionario.message = message.UPDATED_ITEM.message
+                    resultDadosFuncionario.funcionario = dadosFuncionario
+                    return resultDadosFuncionario
+                }else {
+
+                    return message.ERROR_INTERNAL_SERVER_DB // 500
+
+                }
+                
+            }
+    
+        }else{
+            return message.ERROR_CONTENT_TYPE // 415
+        }
+
+    } catch (error) {
+        message.ERROR_INTERNAL_SERVER // 500
+    }
+
+}
+
+//Função para atualizar um funcionário existente
+const setAtualizarFuncionarioSenha = async(dadosFuncionario, contentType, idFuncionario) => {
+
+    try {
+        
+        if(String(contentType).toLowerCase() == 'application/json'){
+
+            let resultDadosFuncionario = {}
+        
+            if( 
+                idFuncionario == ''          || idFuncionario == undefined          ||
+                dadosFuncionario.nome == ''  || dadosFuncionario.nome == undefined  || dadosFuncionario.nome.length > 100  ||
                 dadosFuncionario.email == '' || dadosFuncionario.email == undefined || dadosFuncionario.email.length > 100 ||
                 dadosFuncionario.senha == '' || dadosFuncionario.senha == undefined || dadosFuncionario.senha.length > 50 
             ){
@@ -264,6 +311,7 @@ const getValidarFuncionario = async(email, senha, contentType) => {
 module.exports = {
     setNovoFuncionario,
     setAtualizarFuncionario,
+    setAtualizarFuncionarioSenha,
     setExcluirFuncionario,
     getListarFuncionarios,
     getBuscarFuncionario,

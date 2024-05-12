@@ -25,10 +25,26 @@ const insertFuncionario = async (dadosFuncionario) => {
 }
 
 // Atualizar um funcionário existente filtrando pelo ID
-const updateFuncionario = async (dadosFuncionario, idFuncionario) => {
+const updateFuncionarioSenha = async (dadosFuncionario, idFuncionario) => {
 
     try {
         let sql = `update tbl_funcionario set nome = '${dadosFuncionario.nome}', email = '${dadosFuncionario.email}', senha = md5('${dadosFuncionario.senha}') where id = ${idFuncionario}`   
+        let resultStatus = await prisma.$executeRawUnsafe(sql)
+        if(resultStatus)
+            return true
+        else
+            return false
+    } catch (error) {
+        return false
+    }
+
+}
+
+// Atualizar um funcionário existente filtrando pelo ID
+const updateFuncionario = async (dadosFuncionario, idFuncionario) => {
+
+    try {
+        let sql = `update tbl_funcionario set nome = '${dadosFuncionario.nome}', email = '${dadosFuncionario.email}' where id = ${idFuncionario}`   
         let resultStatus = await prisma.$executeRawUnsafe(sql)
         if(resultStatus)
             return true
@@ -57,7 +73,7 @@ const deleteFuncionario = async (id) => {
 const selectAllFuncionarios = async () => {   
 
     try {
-        let sql = 'select * from tbl_funcionario order by id desc'
+        let sql = 'select nome, email from tbl_funcionario order by id desc'
         let rsFuncionario = await prisma.$queryRawUnsafe(sql)
         return rsFuncionario
     } catch (error) {
@@ -70,7 +86,7 @@ const selectAllFuncionarios = async () => {
 const selectByIdFuncionario = async (id) => {
 
     try {
-        let sql = `select * from tbl_funcionario where id = ${id}`
+        let sql = `select nome, email from tbl_funcionario where id = ${id}`
         let rsFuncionario = await prisma.$queryRawUnsafe(sql)
         return rsFuncionario
     } catch (error) {
@@ -108,6 +124,7 @@ const selectLastId = async () => {
 module.exports = {
     insertFuncionario,
     updateFuncionario,
+    updateFuncionarioSenha,
     deleteFuncionario,
     selectAllFuncionarios,
     selectByIdFuncionario,
