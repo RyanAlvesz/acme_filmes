@@ -73,7 +73,7 @@ const deleteFuncionario = async (id) => {
 const selectAllFuncionarios = async () => {   
 
     try {
-        let sql = 'select nome, email from tbl_funcionario order by id desc'
+        let sql = 'select id, nome, email from tbl_funcionario order by id desc'
         let rsFuncionario = await prisma.$queryRawUnsafe(sql)
         return rsFuncionario
     } catch (error) {
@@ -86,7 +86,7 @@ const selectAllFuncionarios = async () => {
 const selectByIdFuncionario = async (id) => {
 
     try {
-        let sql = `select nome, email from tbl_funcionario where id = ${id}`
+        let sql = `select id, nome, email from tbl_funcionario where id = ${id}`
         let rsFuncionario = await prisma.$queryRawUnsafe(sql)
         return rsFuncionario
     } catch (error) {
